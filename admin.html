@@ -28,6 +28,21 @@
   --red:#dc2626;--red-bg:#dc262615;
 }
 html{font-size:15px;color-scheme:dark light}
+/* Smooth theme transitions — must be on html not body to avoid flash */
+html{transition:background-color .25s,color .25s}
+body,
+.sidebar,.content,
+.screen-card,.screen,
+.settings-card,.book-tile,.deploy-card,
+.qi,.epub-row,.stat,.drop-zone,.pipeline-notice,
+.upload-queue,.queue,input,select,
+.sb-logo,.sb-item,.sb-footer,.sb-ext-link,
+.btn,.btn-ghost,.btn-primary,.btn-danger,
+.toast,.td-head,.td-list li,.td-list li a,
+.sp-panel,.toc-drawer,.backdrop,
+.deploy-card,.progress-track{
+  transition:background-color .25s,color .25s,border-color .2s;
+}
 body{font-family:var(--ff);background:var(--bg0);color:var(--tx);min-height:100vh;line-height:1.5}
 a{color:var(--ind2);text-decoration:none}
 a:hover{text-decoration:underline}
@@ -857,7 +872,8 @@ const fmtDate = iso => { try { return new Date(iso).toLocaleString('vi-VN',{date
   const saved = localStorage.getItem(LS_T)
     || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
 
-  function applyAdminTheme(t) {
+  function applyAdminTheme(t, instant) {
+    if (instant) html.style.transition = 'none';
     html.setAttribute('data-theme', t);
     localStorage.setItem(LS_T, t);
     const btn  = document.getElementById('admin-theme-btn');
@@ -865,9 +881,10 @@ const fmtDate = iso => { try { return new Date(iso).toLocaleString('vi-VN',{date
     const sun  = btn && btn.querySelector('.icon-sun');
     if (moon) moon.style.display = t === 'dark' ? '' : 'none';
     if (sun)  sun.style.display  = t === 'dark' ? 'none' : '';
+    if (instant) requestAnimationFrame(() => { html.style.transition = ''; });
   }
 
-  applyAdminTheme(saved);
+  applyAdminTheme(saved, true); // instant on load = no flash
 
   document.addEventListener('click', e => {
     if (e.target.closest('#admin-theme-btn')) {
