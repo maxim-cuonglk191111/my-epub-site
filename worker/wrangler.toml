@@ -1,0 +1,11 @@
+name = "epub-to-web-api"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+# Secrets are set separately via:
+#   wrangler secret put ADMIN_SECRET
+#   wrangler secret put GITHUB_TOKEN
+#   wrangler secret put GITHUB_REPO
+#   wrangler secret put CF_API_TOKEN      (optional)
+#   wrangler secret put CF_ACCOUNT_ID     (optional)
+#   wrangler secret put CF_PAGES_PROJECT  (optional)

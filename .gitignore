@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Generated site (CF Pages builds this — do NOT commit)
+output/
+
+# Worker node_modules
+worker/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
