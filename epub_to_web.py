@@ -52,13 +52,15 @@ warnings.filterwarnings("ignore", message="It looks like you're parsing an XML d
 #  UTILITIES
 # ══════════════════════════════════════════════════════════════════════════════
 
-def slugify(text: str) -> str:
-    """Vietnamese-aware slug: strips diacritics → lowercase → hyphens."""
+def slugify(text: str, max_len: int = 60) -> str:
+    """Vietnamese-aware slug: strips diacritics → lowercase → hyphens → max 60 chars."""
     text = unicodedata.normalize("NFD", str(text))
     text = "".join(c for c in text if unicodedata.category(c) != "Mn")
     text = text.lower()
     text = re.sub(r"[^\w\s-]", "", text)
     text = re.sub(r"[-\s]+", "-", text).strip("-_")
+    if len(text) > max_len:
+        text = text[:max_len].rstrip("-")
     return text or "untitled"
 
 
@@ -206,65 +208,126 @@ def parse_epub(epub_path: Path, book_out_dir: Path) -> dict:
                 shutil.copy(dest, cover_dest)
             img_map[item.file_name] = f"images/cover{ext}"  # remap to canonical name
 
-    # ── TOC map ───────────────────────────────────────────────────────────────
-    toc_map: dict[str, str] = {}  # file_name → chapter title
+    # ── Language-aware fallback chapter word ─────────────────────────────────
+    ch_word = "Chapter" if language.lower().startswith("en") else "Chương"
 
-    def _flatten_toc(items):
+    # ── File-name → document item lookup (multiple path formats) ─────────────
+    fname_to_item: dict[str, object] = {}
+    for it in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
+        fname_to_item[it.file_name]              = it  # full path: OEBPS/ch1.xhtml
+        fname_to_item[Path(it.file_name).name]   = it  # basename: ch1.xhtml
+        # also without leading slash / dot-dot
+        norm = it.file_name.lstrip("/").lstrip("./")
+        fname_to_item.setdefault(norm, it)
+
+    # ── Collect TOC entries in order ──────────────────────────────────────────
+    def _collect_toc(items: list, result: list) -> None:
         for item in items:
             if isinstance(item, epub.Link):
-                href = item.href.split("#")[0]
-                toc_map.setdefault(href, item.title)
+                result.append((item.href.split("#")[0], item.title or ""))
             elif isinstance(item, tuple) and len(item) == 2:
                 sec, children = item
                 if hasattr(sec, "href"):
-                    toc_map.setdefault(sec.href.split("#")[0], sec.title)
-                _flatten_toc(children)
+                    result.append((sec.href.split("#")[0], sec.title or ""))
+                _collect_toc(children, result)
 
-    _flatten_toc(book.toc)
+    toc_raw: list[tuple[str, str]] = []
+    _collect_toc(book.toc, toc_raw)
+
+    # Deduplicate by file path (same file may appear at multiple TOC levels)
+    seen_files: set[str] = set()
+    toc_entries: list[tuple[str, str]] = []
+    for href, title in toc_raw:
+        key = Path(href).name  # normalise to basename for dedup
+        if key not in seen_files:
+            seen_files.add(key)
+            toc_entries.append((href, title))
 
     # ── Chapters ──────────────────────────────────────────────────────────────
-    id_to_item = {it.id: it for it in book.get_items()}
-    doc_items  = [
-        id_to_item[iid]
-        for iid, _ in book.spine
-        if iid in id_to_item
-        and id_to_item[iid].get_type() == ebooklib.ITEM_DOCUMENT
-    ] or list(book.get_items_of_type(ebooklib.ITEM_DOCUMENT))
+    chapters: list[dict] = []
+    ch_num   = 0
 
-    chapters = []
-    ch_num = 0
+    # Pages whose heading marks them as non-content structural matter
+    _STRUCTURAL = {
+        "contents", "table of contents", "toc", "cover", "title page",
+        "copyright", "colophon", "index", "blank page", "half title",
+        "series page", "also by",
+    }
 
-    for item in doc_items:
-        raw = item.get_content().decode("utf-8", errors="replace")
-        soup = BeautifulSoup(raw, "lxml")
+    if toc_entries:
+        # ── Strategy A: TOC-first (preferred) ─────────────────────────────────
+        # Follow the TOC exactly — same order and titles as the author intended.
+        for href, toc_title in toc_entries:
+            item = (
+                fname_to_item.get(href)
+                or fname_to_item.get(Path(href).name)
+                or fname_to_item.get(href.lstrip("/"))
+            )
+            if not item:
+                continue
 
-        # Skip nav/toc/cover pages (too short or contains nav element)
-        if soup.find("nav") or len(soup.get_text(strip=True)) < 150:
-            continue
+            raw  = item.get_content().decode("utf-8", errors="replace")
+            soup = BeautifulSoup(raw, "lxml")
+            text = soup.get_text(strip=True)
 
-        ch_num += 1
-        fname  = Path(item.file_name).name
+            if len(text) < 80:          # Skip near-empty pages (title, copyright…)
+                continue
 
-        # Determine title: TOC → h-tag → fallback
-        ch_title = (
-            toc_map.get(item.file_name)
-            or toc_map.get(fname)
-        )
-        if not ch_title:
-            h = soup.find(["h1", "h2", "h3"])
-            ch_title = h.get_text(strip=True) if h else f"Chương {ch_num}"
+            ch_num += 1
+            content  = clean_html(raw, img_map)
+            ch_slug  = f"chuong-{ch_num}"
+            ch_title = toc_title.strip() or f"{ch_word} {ch_num}"
 
-        content  = clean_html(raw, img_map)
-        ch_slug  = f"chuong-{ch_num}"
+            chapters.append({
+                "number":  ch_num,
+                "title":   ch_title,
+                "slug":    ch_slug,
+                "content": content,
+            })
+            label = ch_title[:68] + ("…" if len(ch_title) > 68 else "")
+            print(f"    [{ch_num:4d}] {label}")
 
-        chapters.append({
-            "number":  ch_num,
-            "title":   ch_title,
-            "slug":    ch_slug,
-            "content": content,
-        })
-        label = ch_title[:65] + ("…" if len(ch_title) > 65 else "")
-        print(f"    [{ch_num:4d}] {label}")
+    else:
+        # ── Strategy B: Spine scan fallback (EPUBs without a usable TOC) ──────
+        id_to_item = {it.id: it for it in book.get_items()}
+        doc_items = [
+            id_to_item[iid]
+            for iid, _ in book.spine
+            if iid in id_to_item
+            and id_to_item[iid].get_type() == ebooklib.ITEM_DOCUMENT
+        ] or list(book.get_items_of_type(ebooklib.ITEM_DOCUMENT))
+
+        for item in doc_items:
+            raw  = item.get_content().decode("utf-8", errors="replace")
+            soup = BeautifulSoup(raw, "lxml")
+            text = soup.get_text(strip=True)
+
+            if soup.find("nav") or len(text) < 200:
+                continue
+
+            h       = soup.find(["h1", "h2", "h3"])
+            heading = h.get_text(strip=True) if h else ""
+            if heading.lower().strip() in _STRUCTURAL:
+                continue
+
+            ch_num += 1
+            fname    = Path(item.file_name).name
+            ch_title = (
+                heading
+                or f"{ch_word} {ch_num}"
+            )
+
+            content  = clean_html(raw, img_map)
+            ch_slug  = f"chuong-{ch_num}"
+
+            chapters.append({
+                "number":  ch_num,
+                "title":   ch_title,
+                "slug":    ch_slug,
+                "content": content,
+            })
+            label = ch_title[:68] + ("…" if len(ch_title) > 68 else "")
+            print(f"    [{ch_num:4d}] {label}")
 
     print(f"    ✅  {len(chapters)} chapters")
 
@@ -329,6 +392,9 @@ _T["base.html"] = r"""<!DOCTYPE html>
       <a href="{{ base_url }}/" class="site-logo">
         <span class="logo-glyph">❧</span>
         <span class="logo-name">{{ site_name }}</span>
+      </a>
+      <a href="/admin/" class="icon-btn admin-link" title="Trang quản trị" aria-label="Admin">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </a>
       <button id="theme-btn" class="icon-btn" title="Đổi giao diện" aria-label="Toggle theme">
         <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -796,6 +862,10 @@ img{max-width:100%;height:auto;display:block}
 @media(prefers-reduced-motion:reduce){
   *{transition:none!important;animation:none!important}
 }
+.admin-link{
+  opacity:0;transition:opacity .25s;
+}
+.nav-wrap:hover .admin-link{opacity:1}
 """
 
 
