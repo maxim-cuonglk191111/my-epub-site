@@ -111,6 +111,45 @@ def clean_html(raw: str, img_map: dict | None = None) -> str:
 #  EPUB PARSER
 # ══════════════════════════════════════════════════════════════════════════════
 
+# Section/chapter names that are NEVER valid book titles
+_BAD_TITLES: set[str] = {
+    "about the author", "the end", "end", "epilogue", "foreword",
+    "introduction", "copyright", "copyright page", "contents",
+    "table of contents", "acknowledgments", "acknowledgements",
+    "preface", "prologue", "notes", "bibliography", "index",
+    "glossary", "appendix", "dedication", "untitled", "unknown",
+    "title", "title page", "cover", "half title", "series page",
+    "also by", "also by the author", "about this book",
+}
+
+def _is_bad_title(s: str) -> bool:
+    """Return True if s looks like a section name, not a real book title."""
+    if not s or len(s.strip()) < 2:
+        return True
+    t = s.strip().lower()
+    if t in _BAD_TITLES:
+        return True
+    # Short ALL-CAPS text (e.g. "THE END", "FOREWORD", "EPILOGUE")
+    stripped = s.strip()
+    if len(stripped) <= 30 and stripped == stripped.upper() and re.search(r"[A-Z]", stripped):
+        return True
+    return False
+
+def _title_from_filename(stem: str) -> str:
+    """
+    Derive a clean book title from the EPUB filename stem.
+    Strips trailing (Author), (Z-Library), [2023] etc. — handles stacked suffixes.
+    """
+    t = stem
+    prev = None
+    while t != prev:
+        prev = t
+        t = re.sub(r"\s*\([^)]+\)\s*$", "", t).strip()  # remove (xxx)
+        t = re.sub(r"\s*\[[^\]]+\]\s*$", "", t).strip()  # remove [xxx]
+    t = re.sub(r"\s{2,}", " ", t).strip()
+    return t or stem
+
+
 def find_cover_item(book):
     """
     Locate the cover image item in an EPUB using multiple fallback strategies:
@@ -162,13 +201,29 @@ def parse_epub(epub_path: Path, book_out_dir: Path) -> dict:
 
     # ── Metadata ──────────────────────────────────────────────────────────────
     def _meta(ns, key):
+        # Return all values for the key, not just the first — lets us pick
+        # the best one if multiple entries exist.
         v = book.get_metadata(ns, key)
-        return v[0][0] if v else None
+        return [x[0] for x in v if x[0]] if v else []
 
-    title       = _meta("DC", "title")       or epub_path.stem
-    author      = _meta("DC", "creator")     or "Không rõ"
-    description = _meta("DC", "description") or ""
-    language    = _meta("DC", "language")    or "vi"
+    # Title: try each DC title entry; skip section-like values; fall back to filename
+    raw_titles  = _meta("DC", "title")
+    title = next((t for t in raw_titles if not _is_bad_title(t)), None)
+    if not title:
+        title = _title_from_filename(epub_path.stem)
+
+    # Author: use first non-empty; reject if it duplicates the title (bad metadata)
+    raw_authors = _meta("DC", "creator")
+    author = next(
+        (a for a in raw_authors
+         if a and a.strip().lower() != title.strip().lower()),
+        "Không rõ",
+    )
+
+    raw_desc    = _meta("DC", "description")
+    description = raw_desc[0] if raw_desc else ""
+    raw_lang    = _meta("DC", "language")
+    language    = raw_lang[0] if raw_lang else "vi"
 
     if description:
         description = BeautifulSoup(description, "lxml").get_text()
