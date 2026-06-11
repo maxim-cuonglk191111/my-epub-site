@@ -387,7 +387,7 @@ _T["base.html"] = r"""<!DOCTYPE html>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
 </head>
 <body>
-  <header class="site-header">
+  <header class="site-header" id="site-header">
     <nav class="nav-wrap">
       <a href="{{ base_url }}/" class="site-logo">
         <span class="logo-glyph">❧</span>
@@ -498,62 +498,282 @@ _T["chapter.html"] = r"""{% extends "base.html" %}
 <div class="page-chapter">
   <div class="reading-bar" id="reading-bar"></div>
 
-  <div class="reader-bar">
-    <div class="reader-bar-inner wrap">
+  <!-- Sub-nav: auto-hides on scroll down -->
+  <div class="reader-subnav" id="reader-subnav">
+    <div class="reader-subnav-in wrap">
       <a href="index.html" class="back-link">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
         Mục lục
       </a>
-      <span class="reader-book-name">{{ book.title }}</span>
-      <div class="fs-controls">
-        <button id="fs-dec" class="icon-btn" title="Giảm cỡ chữ">A−</button>
-        <button id="fs-inc" class="icon-btn" title="Tăng cỡ chữ">A+</button>
+      <span class="rdr-book-name">{{ book.title }}</span>
+      <div style="display:flex;gap:.2rem;flex-shrink:0">
+        <button class="icon-btn" id="btn-toc-top" title="Danh sách chương">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </button>
+        <button class="icon-btn" id="btn-sp-top" title="Cài đặt đọc" style="font-size:.8rem;font-weight:600">Aa</button>
       </div>
     </div>
   </div>
 
+  <!-- Chapter body -->
   <article class="reader" id="reader">
     <header class="ch-header wrap">
       <p class="ch-eyebrow">{{ book.title }}</p>
       <h1 class="ch-title">{{ chapter.title }}</h1>
     </header>
-    <div class="ch-body wrap" id="ch-body">
-      {{ chapter.content | safe }}
-    </div>
+    <div class="ch-body wrap" id="ch-body">{{ chapter.content | safe }}</div>
   </article>
 
+  <!-- Inline bottom nav -->
   <nav class="ch-nav wrap" aria-label="Điều hướng chương">
     <div class="ch-nav-grid">
       {% if prev_chapter %}
       <a href="{{ prev_chapter.slug }}.html" class="nav-btn nav-prev">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-        <span><small>Trước</small><strong>{{ prev_chapter.title }}</strong></span>
+        <span><small>Chương trước</small><strong>{{ prev_chapter.title }}</strong></span>
       </a>
       {% else %}<div></div>{% endif %}
-
-      <a href="index.html" class="nav-toc" title="Mục lục">📑</a>
-
+      <a href="index.html" class="nav-toc" title="Mục lục">☰</a>
       {% if next_chapter %}
       <a href="{{ next_chapter.slug }}.html" class="nav-btn nav-next">
-        <span><small>Tiếp</small><strong>{{ next_chapter.title }}</strong></span>
+        <span><small>Chương tiếp</small><strong>{{ next_chapter.title }}</strong></span>
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
       {% else %}<div></div>{% endif %}
     </div>
   </nav>
 </div>
+
+<!-- ── Float bar ── -->
+<div class="float-bar" id="float-bar">
+  {% if prev_chapter %}
+  <a href="{{ prev_chapter.slug }}.html" class="fbar-btn" id="float-prev" title="{{ prev_chapter.title }}">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    <span>Trước</span>
+  </a>
+  {% else %}
+  <span class="fbar-btn fbar-disabled">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    <span>Trước</span>
+  </span>
+  {% endif %}
+  <div class="fbar-sep"></div>
+  <button class="fbar-btn" id="btn-toc-bar" title="Danh sách chương">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    <span>Mục lục</span>
+  </button>
+  <button class="fbar-btn" id="btn-sp-bar" style="font-size:.85rem;font-weight:700;letter-spacing:-.02em" title="Cài đặt đọc">
+    Aa
+    <span>Cài đặt</span>
+  </button>
+  <div class="fbar-sep"></div>
+  {% if next_chapter %}
+  <a href="{{ next_chapter.slug }}.html" class="fbar-btn" id="float-next" title="{{ next_chapter.title }}">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    <span>Tiếp</span>
+  </a>
+  {% else %}
+  <span class="fbar-btn fbar-disabled">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    <span>Tiếp</span>
+  </span>
+  {% endif %}
+</div>
+
+<!-- ── Settings panel ── -->
+<div class="sp-panel" id="sp-panel">
+  <div class="sp-handle"></div>
+  <div class="sp-head">
+    <span class="sp-head-title">Cài đặt đọc</span>
+    <button class="sp-close" id="btn-sp-close">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="sp-body">
+    <div class="sp-group">
+      <div class="sp-label">Cỡ chữ</div>
+      <div class="sp-row sp-fs-row">
+        <button class="sp-ctrl" id="sp-fs-dec">A−</button>
+        <span class="sp-fs-disp"><span id="sp-fs-val">18</span>px</span>
+        <button class="sp-ctrl" id="sp-fs-inc">A+</button>
+      </div>
+    </div>
+    <div class="sp-group">
+      <div class="sp-label">Font chữ</div>
+      <div class="sp-row">
+        <button class="sp-opt" data-pref="font" data-val="serif" style="font-family:'Crimson Pro',Georgia,serif;font-size:1rem">Serif</button>
+        <button class="sp-opt" data-pref="font" data-val="sans"  style="font-family:system-ui,sans-serif">Sans-serif</button>
+      </div>
+    </div>
+    <div class="sp-group">
+      <div class="sp-label">Giãn dòng</div>
+      <div class="sp-row">
+        <button class="sp-opt" data-pref="lh" data-val="1.6">Chật</button>
+        <button class="sp-opt" data-pref="lh" data-val="1.9">Vừa</button>
+        <button class="sp-opt" data-pref="lh" data-val="2.3">Rộng</button>
+      </div>
+    </div>
+    <div class="sp-group">
+      <div class="sp-label">Độ rộng trang</div>
+      <div class="sp-row">
+        <button class="sp-opt" data-pref="width" data-val="52ch">Hẹp</button>
+        <button class="sp-opt" data-pref="width" data-val="68ch">Vừa</button>
+        <button class="sp-opt" data-pref="width" data-val="90ch">Rộng</button>
+      </div>
+    </div>
+    <div class="sp-group">
+      <div class="sp-label">Màu nền</div>
+      <div class="sp-row">
+        <button class="sp-bg" data-bg="light">☀ Trắng</button>
+        <button class="sp-bg" data-bg="sepia">📜 Vàng</button>
+        <button class="sp-bg" data-bg="dark" >🌙 Tối</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOC drawer ── -->
+<div class="toc-drawer" id="toc-drawer">
+  <div class="td-head">
+    <div>
+      <div class="td-book-title">{{ book.title }}</div>
+      <div class="td-ch-count">{{ book.chapter_count }} chương · đang đọc #{{ chapter.number }}</div>
+    </div>
+    <button class="td-close" id="btn-td-close">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <ol class="td-list" id="td-list">
+    {% for ch in chapters %}
+    <li{% if ch.number == chapter.number %} class="td-cur"{% endif %}>
+      <a href="{{ ch.slug }}.html">
+        <span class="td-num">{{ ch.number }}</span>
+        <span class="td-title">{{ ch.title }}</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ol>
+</div>
+
+<!-- ── Backdrop ── -->
+<div class="backdrop" id="backdrop"></div>
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
-  const bar = document.getElementById('reading-bar');
-  const reader = document.getElementById('reader');
-  window.addEventListener('scroll', () => {
-    const pct = Math.max(0, Math.min(100,
-      (-reader.getBoundingClientRect().top / (reader.offsetHeight - window.innerHeight)) * 100
-    ));
-    bar.style.width = pct + '%';
-  }, { passive: true });
+(function(){
+'use strict';
+const LS_P = 'rdr-prefs';
+const html  = document.documentElement;
+const DEFS  = { fs: 1.15, font: 'serif', lh: 1.9, width: '68ch', bg: 'light' };
+let P = Object.assign({}, DEFS, JSON.parse(localStorage.getItem(LS_P)||'{}'));
+
+function saveP(){ localStorage.setItem(LS_P, JSON.stringify(P)); }
+
+function applyP(){
+  html.style.setProperty('--fs',   P.fs + 'rem');
+  html.style.setProperty('--lh',   P.lh);
+  html.style.setProperty('--rmax', P.width);
+  html.style.setProperty('--rw',
+    P.font === 'sans' ? "'Inter',system-ui,sans-serif"
+                      : "'Crimson Pro',Georgia,serif");
+  // Reading background (separate from site theme)
+  html.setAttribute('data-reading-bg', P.bg);
+  // Active states
+  document.querySelectorAll('.sp-opt').forEach(b =>
+    b.classList.toggle('sp-active', String(P[b.dataset.pref]) === b.dataset.val));
+  document.querySelectorAll('.sp-bg').forEach(b =>
+    b.classList.toggle('sp-active', b.dataset.bg === P.bg));
+  const v = document.getElementById('sp-fs-val');
+  if(v) v.textContent = Math.round(P.fs * 16);
+}
+applyP();
+
+// Font size controls
+document.getElementById('sp-fs-dec')?.addEventListener('click', ()=>{
+  P.fs = +(Math.max(0.875, P.fs - 0.0625)).toFixed(4); saveP(); applyP();
+});
+document.getElementById('sp-fs-inc')?.addEventListener('click', ()=>{
+  P.fs = +(Math.min(2.0,   P.fs + 0.0625)).toFixed(4); saveP(); applyP();
+});
+document.querySelectorAll('.sp-opt').forEach(b=>b.addEventListener('click',()=>{
+  P[b.dataset.pref] = b.dataset.val; saveP(); applyP();
+}));
+document.querySelectorAll('.sp-bg').forEach(b=>b.addEventListener('click',()=>{
+  P.bg = b.dataset.bg; saveP(); applyP();
+}));
+
+// ── Auto-hide on scroll ─────────────────────────────────────────────────────
+let lastY = window.scrollY, tick = false;
+const hdr    = document.getElementById('site-header');
+const subnav = document.getElementById('reader-subnav');
+const fbar   = document.getElementById('float-bar');
+function onScroll(){
+  const y = window.scrollY, d = y - lastY;
+  if(Math.abs(d) > 4){
+    const hide = d > 0 && y > 120;
+    hdr?.classList.toggle('hdr-hidden', hide);
+    subnav?.classList.toggle('hdr-hidden', hide);
+    fbar?.classList.toggle('fbar-hidden', hide);
+    lastY = y;
+  }
+  tick = false;
+}
+window.addEventListener('scroll',()=>{ if(!tick){requestAnimationFrame(onScroll);tick=true;} },{passive:true});
+
+// ── Progress bar ────────────────────────────────────────────────────────────
+const bar    = document.getElementById('reading-bar');
+const reader = document.getElementById('reader');
+window.addEventListener('scroll',()=>{
+  if(!bar||!reader) return;
+  const tot = reader.offsetHeight - window.innerHeight;
+  bar.style.width = (tot<=0?100:Math.max(0,Math.min(100,-reader.getBoundingClientRect().top/tot*100)))+'%';
+},{passive:true});
+
+// ── Panels ──────────────────────────────────────────────────────────────────
+const spPanel  = document.getElementById('sp-panel');
+const tocPanel = document.getElementById('toc-drawer');
+const backdrop = document.getElementById('backdrop');
+function closeAll(){
+  spPanel.classList.remove('panel-open');
+  tocPanel.classList.remove('panel-open');
+  backdrop.classList.remove('panel-open');
+  document.body.classList.remove('no-scroll');
+}
+function openPanel(el){
+  closeAll();
+  el.classList.add('panel-open');
+  backdrop.classList.add('panel-open');
+  document.body.classList.add('no-scroll');
+}
+function togPanel(el){ el.classList.contains('panel-open')?closeAll():openPanel(el); }
+
+['btn-sp-bar','btn-sp-top'].forEach(id=>
+  document.getElementById(id)?.addEventListener('click',()=>togPanel(spPanel)));
+['btn-toc-bar','btn-toc-top'].forEach(id=>
+  document.getElementById(id)?.addEventListener('click',()=>{
+    togPanel(tocPanel);
+    if(tocPanel.classList.contains('panel-open'))
+      setTimeout(()=>document.querySelector('.td-cur')?.scrollIntoView({block:'center',behavior:'smooth'}),150);
+  }));
+document.getElementById('btn-sp-close')?.addEventListener('click', closeAll);
+document.getElementById('btn-td-close')?.addEventListener('click', closeAll);
+backdrop.addEventListener('click', closeAll);
+
+// ── Session scroll ──────────────────────────────────────────────────────────
+const PK = 'pos:'+location.pathname;
+const sp = sessionStorage.getItem(PK);
+if(sp) requestAnimationFrame(()=>window.scrollTo(0,parseInt(sp)));
+window.addEventListener('beforeunload',()=>sessionStorage.setItem(PK,window.scrollY));
+
+// ── Keyboard ────────────────────────────────────────────────────────────────
+document.addEventListener('keydown',e=>{
+  if(['INPUT','TEXTAREA'].includes(e.target.tagName)) return;
+  if(e.key==='ArrowLeft'||e.key===',')  document.getElementById('float-prev')?.click();
+  if(e.key==='ArrowRight'||e.key==='.') document.getElementById('float-next')?.click();
+  if(e.key==='Escape') closeAll();
+});
+})();
 </script>
 {% endblock %}
 """
@@ -859,13 +1079,169 @@ img{max-width:100%;height:auto;display:block}
   .reader-book-name{display:none}
   .ch-body p:first-child::first-letter{float:none;font-size:1em;padding:0;color:inherit}
 }
-@media(prefers-reduced-motion:reduce){
-  *{transition:none!important;animation:none!important}
+
+/* ── Reading background overrides (set via data-reading-bg on html) ── */
+[data-reading-bg="sepia"]{--bg:#faf3e5;--bg-2:#f0e8d0;--bg-3:#e5d8b8;--ink:#3d2f18;--ink-2:#6b5539;--ink-3:#9b8060;--gold:#9b6c1a}
+[data-reading-bg="dark"] {--bg:#171412;--bg-2:#201d1a;--bg-3:#2a2623;--ink:#e8e0d5;--ink-2:#a8a29e;--ink-3:#78716c;--gold:#c9a55a}
+[data-reading-bg="light"]{/* uses :root theme vars */}
+
+/* ── Header auto-hide ── */
+.site-header{transition:transform .3s cubic-bezier(.4,0,.2,1);}
+.site-header.hdr-hidden{transform:translateY(-100%)}
+
+/* ── Reader sub-nav ── */
+.reader-subnav{
+  position:sticky;top:0;z-index:55;
+  background:color-mix(in srgb,var(--bg) 92%,transparent);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--bg-3);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
 }
-.admin-link{
-  opacity:0;transition:opacity .25s;
+.reader-subnav.hdr-hidden{transform:translateY(calc(-100% - 50px))}
+.reader-subnav-in{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.45rem 1.5rem;gap:.75rem;
 }
+.rdr-book-name{
+  font-size:.78rem;color:var(--ink-3);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:center;
+}
+
+/* ── Float bar ── */
+.float-bar{
+  position:fixed;bottom:1.5rem;left:50%;
+  transform:translateX(-50%);
+  display:flex;align-items:center;
+  background:var(--bg);border:1px solid var(--bg-3);
+  border-radius:99px;padding:.35rem .45rem;
+  box-shadow:0 4px 28px rgba(0,0,0,.18),0 1px 6px rgba(0,0,0,.08);
+  z-index:60;
+  transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s,bottom .2s;
+}
+.float-bar.fbar-hidden{
+  transform:translateX(-50%) translateY(calc(100% + 2rem));
+  opacity:0;pointer-events:none;
+}
+.fbar-btn{
+  display:flex;flex-direction:column;align-items:center;gap:.12rem;
+  padding:.45rem .75rem;border-radius:99px;
+  font-size:.62rem;font-weight:500;color:var(--ink-2);
+  border:none;background:none;cursor:pointer;text-decoration:none;
+  transition:background .15s,color .15s;min-width:48px;
+}
+.fbar-btn:hover{background:var(--bg-2);color:var(--ink);text-decoration:none}
+.fbar-disabled{opacity:.28;pointer-events:none}
+.fbar-sep{width:1px;height:24px;background:var(--bg-3);margin:0 .1rem;flex-shrink:0}
+
+/* ── Backdrop ── */
+.backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);
+  z-index:70;opacity:0;pointer-events:none;
+  transition:opacity .3s;
+}
+.backdrop.panel-open{opacity:1;pointer-events:auto}
+.no-scroll{overflow:hidden}
+
+/* ── Settings panel ── */
+.sp-panel{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--bg);border-top:1px solid var(--bg-3);
+  border-radius:16px 16px 0 0;
+  z-index:80;
+  transform:translateY(100%);
+  transition:transform .32s cubic-bezier(.4,0,.2,1);
+  max-height:80vh;display:flex;flex-direction:column;
+}
+.sp-panel.panel-open{transform:translateY(0)}
+.sp-handle{
+  width:40px;height:4px;border-radius:99px;
+  background:var(--bg-3);margin:.6rem auto .2rem;flex-shrink:0;
+}
+.sp-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.6rem 1.25rem .5rem;flex-shrink:0;
+}
+.sp-head-title{font-size:.88rem;font-weight:600}
+.sp-close{
+  background:none;border:none;cursor:pointer;
+  color:var(--ink-3);padding:.2rem;border-radius:var(--r);
+  transition:color .15s,background .15s;
+}
+.sp-close:hover{color:var(--ink);background:var(--bg-2)}
+.sp-body{overflow-y:auto;padding:.5rem 1.25rem 2rem}
+.sp-group{margin-bottom:1.1rem}
+.sp-label{
+  font-size:.68rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--ink-3);margin-bottom:.5rem;
+}
+.sp-row{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center}
+.sp-fs-row{align-items:center;gap:.75rem}
+.sp-fs-disp{
+  font-size:.82rem;color:var(--ink-2);min-width:3.5rem;text-align:center;
+}
+.sp-ctrl{
+  background:var(--bg-2);border:1px solid var(--bg-3);border-radius:var(--r);
+  color:var(--ink-2);padding:.35rem .8rem;cursor:pointer;font-family:var(--uf);
+  transition:background .15s,color .15s;font-size:.85rem;
+}
+.sp-ctrl:hover{background:var(--bg-3);color:var(--ink)}
+.sp-opt{
+  padding:.4rem .9rem;border-radius:99px;border:1px solid var(--bg-3);
+  background:var(--bg-2);color:var(--ink-2);font-size:.82rem;
+  cursor:pointer;transition:all .15s;font-family:var(--uf);
+}
+.sp-opt:hover{border-color:var(--gold);color:var(--ink)}
+.sp-opt.sp-active,.sp-bg.sp-active{
+  background:var(--gold);color:#fff;border-color:var(--gold);
+}
+.sp-bg{
+  padding:.4rem .9rem;border-radius:99px;border:1px solid var(--bg-3);
+  font-size:.82rem;cursor:pointer;transition:all .15s;font-family:var(--uf);
+}
+.sp-bg:hover{border-color:var(--gold)}
+
+/* ── TOC Drawer ── */
+.toc-drawer{
+  position:fixed;top:0;right:0;bottom:0;
+  width:min(380px,92vw);
+  background:var(--bg);border-left:1px solid var(--bg-3);
+  z-index:80;display:flex;flex-direction:column;
+  transform:translateX(100%);
+  transition:transform .32s cubic-bezier(.4,0,.2,1);
+}
+.toc-drawer.panel-open{transform:translateX(0)}
+.td-head{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:.75rem;padding:1rem 1rem .85rem;
+  border-bottom:1px solid var(--bg-3);flex-shrink:0;
+}
+.td-book-title{font-size:.88rem;font-weight:600;line-height:1.3}
+.td-ch-count{font-size:.72rem;color:var(--ink-3);margin-top:.2rem}
+.td-close{
+  background:none;border:none;cursor:pointer;color:var(--ink-3);
+  padding:.2rem;border-radius:var(--r);flex-shrink:0;margin-top:.1rem;
+  transition:color .15s,background .15s;
+}
+.td-close:hover{color:var(--ink);background:var(--bg-2)}
+.td-list{list-style:none;overflow-y:auto;flex:1;padding:.35rem 0}
+.td-list li{border-bottom:1px solid var(--bg-2)}
+.td-list li a{
+  display:flex;align-items:baseline;gap:.65rem;
+  padding:.6rem 1rem;color:var(--ink-2);
+  transition:background .12s,color .12s;text-decoration:none;
+}
+.td-list li a:hover{background:var(--bg-2);color:var(--ink);text-decoration:none}
+.td-list li.td-cur a{
+  color:var(--gold);font-weight:600;
+  background:color-mix(in srgb,var(--gold) 8%,transparent);
+}
+.td-num{min-width:2.2rem;text-align:right;font-size:.7rem;color:var(--ink-3);flex-shrink:0}
+.td-title{font-size:.84rem;line-height:1.35}
+
+/* ── Admin link ── */
+.admin-link{opacity:0;transition:opacity .25s}
 .nav-wrap:hover .admin-link{opacity:1}
+
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 """
 
 
@@ -974,9 +1350,13 @@ def generate_site(
 
         # Chapter HTML pages
         tpl = env.get_template("chapter.html")
+        # Strip content from chapters list for the TOC drawer (avoid huge HTML)
+        chapters_toc = [{"number": ch["number"], "title": ch["title"], "slug": ch["slug"]}
+                        for ch in chapters]
         for i, ch in enumerate(chapters):
             html = tpl.render(
                 book=book, chapter=ch,
+                chapters=chapters_toc,
                 prev_chapter=chapters[i - 1] if i > 0 else None,
                 next_chapter=chapters[i + 1] if i < len(chapters) - 1 else None,
                 **ctx,
