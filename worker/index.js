@@ -1,13 +1,13 @@
 /**
  * epub-to-web — Cloudflare Worker
  *
- * Required secrets (set via wrangler secret put OR CF dashboard):
+ * Required secrets (wrangler secret put <NAME>):
  *   ADMIN_SECRET    — password for the admin UI
  *   GITHUB_TOKEN    — GitHub PAT (scope: repo)
  *   GITHUB_REPO     — "owner/repo-name"
  *
- * Optional secrets (for Cloudflare Pages deployment status):
- *   CF_API_TOKEN    — Cloudflare API token (scope: Pages:Read)
+ * Optional (for CF Pages deployment status in admin):
+ *   CF_API_TOKEN    — Cloudflare API token (Pages:Read scope)
  *   CF_ACCOUNT_ID   — Your Cloudflare account ID
  *   CF_PAGES_PROJECT — CF Pages project name
  */
@@ -24,36 +24,27 @@ export default {
       return new Response(null, { status: 204, headers: CORS });
     }
 
-    // ── Auth ─────────────────────────────────────────────────────────────────
+    // ── Auth ──────────────────────────────────────────────────────────────────
     const auth = request.headers.get("Authorization") || "";
     if (auth !== `Bearer ${env.ADMIN_SECRET}`) {
       return json({ error: "Unauthorized" }, 401);
     }
 
-    const url = new URL(request.url);
-    const { pathname } = url;
+    const { pathname } = new URL(request.url);
 
     try {
-      // POST /upload  — { filename: string, content: base64 }
-      if (pathname === "/upload" && request.method === "POST") {
+      if (pathname === "/upload" && request.method === "POST")
         return await handleUpload(request, env);
-      }
 
-      // DELETE /book/:filename
-      if (pathname.startsWith("/book/") && request.method === "DELETE") {
-        const filename = decodeURIComponent(pathname.slice(6));
-        return await handleDelete(filename, env);
-      }
+      if (pathname.startsWith("/book/") && request.method === "DELETE")
+        return await handleDelete(decodeURIComponent(pathname.slice(6)), env);
 
-      // GET /status — recent commits + CF Pages deployment
-      if (pathname === "/status" && request.method === "GET") {
+      if (pathname === "/status" && request.method === "GET")
         return await handleStatus(env);
-      }
 
-      // GET /books — proxy books.json (CORS bypass)
-      if (pathname === "/books" && request.method === "GET") {
+      // GET /books — list of .epub files currently in the repo
+      if (pathname === "/books" && request.method === "GET")
         return await handleBooks(env);
-      }
 
       return json({ error: "Not found" }, 404);
     } catch (err) {
@@ -63,78 +54,114 @@ export default {
   },
 };
 
-// ── Upload ────────────────────────────────────────────────────────────────────
+// ── Upload ─────────────────────────────────────────────────────────────────────
+// Client sends: { filename: string, content: base64string }
+// Client does the base64 encoding (FileReader.readAsDataURL) so Worker
+// has minimal CPU work — just passes the b64 straight to GitHub API.
 
 async function handleUpload(request, env) {
   const { filename, content } = await request.json();
 
-  if (!filename || !content) {
-    return json({ error: "filename and content (base64) required" }, 400);
-  }
-  if (!filename.toLowerCase().endsWith(".epub")) {
-    return json({ error: "Only .epub files allowed" }, 400);
-  }
+  if (!filename || !content)
+    return json({ error: "filename and content (base64) are required" }, 400);
 
-  const path = `books/${filename}`;
+  if (!filename.toLowerCase().endsWith(".epub"))
+    return json({ error: "Only .epub files are accepted" }, 400);
 
-  // Check if file exists → need its SHA to update
+  // Sanitise filename: no path traversal
+  const safeName = filename.replace(/[^a-zA-Z0-9._\- ]/g, "_");
+  const path = `books/${safeName}`;
+
+  // Get existing SHA (needed to overwrite an existing file)
   const sha = await getFileSha(path, env);
 
   const body = {
-    message: `upload: ${filename}`,
-    content,               // already base64 from client
+    message: sha ? `update: ${safeName}` : `upload: ${safeName}`,
+    content,   // already base64 — GitHub expects this exact format
     ...(sha ? { sha } : {}),
   };
 
   const res = await ghApi(`contents/${path}`, "PUT", body, env);
+
   if (!res.ok) {
-    const err = await res.json();
-    return json({ error: err.message || "GitHub API error" }, 500);
+    const err = await res.json().catch(() => ({}));
+
+    // GitHub returns 422 when file content hasn't changed.
+    // Treat as success — the file is already there.
+    if (res.status === 422) {
+      const msg = (err.message || "").toLowerCase();
+      if (msg.includes("sha") || msg.includes("nothing to commit") || msg.includes("no change")) {
+        return json({ ok: true, filename: safeName, note: "File unchanged — no new commit created" });
+      }
+    }
+
+    return json({ error: err.message || `GitHub API error (${res.status})` }, 502);
   }
 
-  return json({ ok: true, filename, sha: !!sha ? "updated" : "created" });
+  const data = await res.json();
+  return json({
+    ok:       true,
+    filename: safeName,
+    sha:      sha ? "updated" : "created",
+    commit:   data.commit?.sha?.slice(0, 7),
+  });
 }
 
-// ── Delete ────────────────────────────────────────────────────────────────────
+// ── Delete ─────────────────────────────────────────────────────────────────────
 
 async function handleDelete(filename, env) {
-  const path = `books/${filename}`;
-  const sha = await getFileSha(path, env);
+  // Accept both "slug" and "filename.epub" forms
+  const epubName = filename.endsWith(".epub") ? filename : `${filename}.epub`;
+  // Try the exact name first, then search
+  let path = `books/${epubName}`;
+  let sha = await getFileSha(path, env);
 
-  if (!sha) return json({ error: "File not found in repo" }, 404);
+  if (!sha) {
+    // Search all epub files for a match
+    const { files } = await listBooks(env);
+    const match = files.find(f => {
+      const base = f.name.replace(/\.epub$/i, "");
+      return base === filename || base.replace(/\s+/g, "-").toLowerCase() === filename;
+    });
+    if (!match) return json({ error: `File not found in repo: ${filename}` }, 404);
+    path = `books/${match.name}`;
+    sha  = match.sha;
+  }
 
   const res = await ghApi(`contents/${path}`, "DELETE", {
-    message: `delete: ${filename}`,
+    message: `delete: ${path}`,
     sha,
   }, env);
 
   if (!res.ok) {
-    const err = await res.json();
-    return json({ error: err.message || "GitHub delete failed" }, 500);
+    const err = await res.json().catch(() => ({}));
+    return json({ error: err.message || "GitHub delete failed" }, 502);
   }
 
-  return json({ ok: true, deleted: filename });
+  return json({ ok: true, deleted: path });
 }
 
-// ── Status ────────────────────────────────────────────────────────────────────
+// ── Status ─────────────────────────────────────────────────────────────────────
 
 async function handleStatus(env) {
-  const results = await Promise.allSettled([
+  const [commitsResult, deploysResult] = await Promise.allSettled([
     getGitHubCommits(env),
     getCFDeployments(env),
   ]);
 
-  const commits = results[0].status === "fulfilled" ? results[0].value : [];
-  const deploys = results[1].status === "fulfilled" ? results[1].value : null;
-
-  return json({ commits, deploys });
+  return json({
+    commits: commitsResult.status === "fulfilled" ? commitsResult.value : [],
+    deploys: deploysResult.status === "fulfilled" ? deploysResult.value : null,
+    ts: new Date().toISOString(),
+  });
 }
 
 async function getGitHubCommits(env) {
+  // Get commits that touched books/ folder
   const res = await ghApi("commits?path=books&per_page=10", "GET", null, env);
   if (!res.ok) return [];
   const data = await res.json();
-  return data.map((c) => ({
+  return data.map(c => ({
     sha:     c.sha?.slice(0, 7),
     message: c.commit?.message,
     author:  c.commit?.author?.name,
@@ -144,52 +171,51 @@ async function getGitHubCommits(env) {
 }
 
 async function getCFDeployments(env) {
-  if (!env.CF_API_TOKEN || !env.CF_ACCOUNT_ID || !env.CF_PAGES_PROJECT) {
-    return null; // optional — skip if not configured
-  }
+  if (!env.CF_API_TOKEN || !env.CF_ACCOUNT_ID || !env.CF_PAGES_PROJECT) return null;
   const res = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${env.CF_ACCOUNT_ID}/pages/projects/${env.CF_PAGES_PROJECT}/deployments?per_page=5`,
     { headers: { Authorization: `Bearer ${env.CF_API_TOKEN}` } }
   );
   if (!res.ok) return null;
   const { result } = await res.json();
-  return (result || []).map((d) => ({
-    id:          d.id?.slice(0, 8),
-    status:      d.latest_stage?.status,
-    stage:       d.latest_stage?.name,
-    created_on:  d.created_on,
-    url:         d.url,
-    branch:      d.deployment_trigger?.metadata?.branch,
+  return (result || []).map(d => ({
+    id:         d.id?.slice(0, 8),
+    status:     d.latest_stage?.status,   // "success" | "failure" | "active" | ...
+    stage:      d.latest_stage?.name,
+    created_on: d.created_on,
+    url:        d.url,
+    branch:     d.deployment_trigger?.metadata?.branch,
   }));
 }
 
-// ── Books proxy ───────────────────────────────────────────────────────────────
+// ── Books list ──────────────────────────────────────────────────────────────────
 
 async function handleBooks(env) {
-  // Use GitHub raw URL to fetch the generated books.json
-  // Assumes CF Pages output is committed to gh-pages branch
-  // OR just re-read from the GitHub repo... actually books.json is in output/
-  // which is not committed. Let's return the epub list from books/ folder instead.
-  const res = await ghApi("contents/books", "GET", null, env);
-  if (!res.ok) return json({ files: [] });
-  const files = await res.json();
-  const epubs = Array.isArray(files)
-    ? files
-        .filter((f) => f.name.toLowerCase().endsWith(".epub"))
-        .map((f) => ({ name: f.name, size: f.size, sha: f.sha, download_url: f.download_url }))
-    : [];
-  return json({ files: epubs });
+  const result = await listBooks(env);
+  return json(result);
 }
 
-// ── GitHub helpers ────────────────────────────────────────────────────────────
+async function listBooks(env) {
+  const res = await ghApi("contents/books", "GET", null, env);
+  if (!res.ok) return { files: [] };
+  const raw = await res.json();
+  const files = Array.isArray(raw)
+    ? raw
+        .filter(f => f.name?.toLowerCase().endsWith(".epub"))
+        .map(f => ({ name: f.name, size: f.size, sha: f.sha }))
+    : [];
+  return { files };
+}
+
+// ── GitHub helpers ──────────────────────────────────────────────────────────────
 
 function ghApi(path, method, body, env) {
   return fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/${path}`, {
     method,
     headers: {
-      Authorization: `token ${env.GITHUB_TOKEN}`,
+      Authorization:  `token ${env.GITHUB_TOKEN}`,
       "Content-Type": "application/json",
-      "User-Agent":   "epub-to-web-worker/1.0",
+      "User-Agent":   "epub-to-web/1.0",
       Accept:         "application/vnd.github.v3+json",
     },
     ...(body ? { body: JSON.stringify(body) } : {}),
@@ -203,7 +229,7 @@ async function getFileSha(path, env) {
   return data.sha || null;
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Helpers ─────────────────────────────────────────────────────────────────────
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
