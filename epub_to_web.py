@@ -18,6 +18,9 @@ Cloudflare Pages settings:
 import os, sys, json, re, shutil, unicodedata, argparse, warnings
 from pathlib import Path
 
+# Bump this whenever parsing logic changes — forces .meta.json cache invalidation
+CACHE_VERSION = "3"
+
 # ── Dependency check ──────────────────────────────────────────────────────────
 _missing = []
 try:
@@ -398,8 +401,10 @@ def parse_epub(epub_path: Path, book_out_dir: Path) -> dict:
         "chapters":      chapters,
     }
 
-    # Write lightweight cache (no content, just metadata + chapter list)
+    # Write lightweight cache (no content). Stamped with CACHE_VERSION so stale
+    # caches (from earlier code) are automatically invalidated on next build.
     meta = {k: v for k, v in full_data.items() if k != "chapters"}
+    meta["_v"]      = CACHE_VERSION
     meta["chapters"] = [
         {"number": c["number"], "title": c["title"], "slug": c["slug"]}
         for c in chapters
@@ -412,12 +417,26 @@ def parse_epub(epub_path: Path, book_out_dir: Path) -> dict:
 
 
 def load_meta(book_out_dir: Path) -> dict | None:
-    """Load cached book metadata (no content). Returns None if not found."""
+    """
+    Load cached book metadata. Returns None if:
+    - File doesn't exist
+    - Version stamp doesn't match CACHE_VERSION (stale cache → re-parse)
+    - Title looks like a section name (bad data from an older run)
+    """
     meta_path = book_out_dir / ".meta.json"
     if not meta_path.exists():
         return None
     try:
-        return json.loads(meta_path.read_text(encoding="utf-8"))
+        data = json.loads(meta_path.read_text(encoding="utf-8"))
+        # Version check — invalidate if code has changed since last run
+        if data.get("_v") != CACHE_VERSION:
+            print(f"    ♻️  Cache outdated (v{data.get('_v','?')}→{CACHE_VERSION}): {book_out_dir.name}")
+            return None
+        # Sanity check — reject obviously wrong titles
+        if _is_bad_title(data.get("title", "")):
+            print(f"    ♻️  Cache has bad title, re-parsing: {book_out_dir.name}")
+            return None
+        return data
     except Exception:
         return None
 
@@ -445,10 +464,10 @@ _T["base.html"] = r"""<!DOCTYPE html>
   <header class="site-header" id="site-header">
     <nav class="nav-wrap">
       <a href="{{ base_url }}/" class="site-logo">
-        <span class="logo-glyph">❧</span>
+        <span class="logo-glyph">✦</span>
         <span class="logo-name">{{ site_name }}</span>
       </a>
-      <a href="/admin/" class="icon-btn admin-link" title="Trang quản trị" aria-label="Admin">
+      <a href="/admin/" class="icon-btn admin-link" title="Readr Admin" aria-label="Admin">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </a>
       <button id="theme-btn" class="icon-btn" title="Đổi giao diện" aria-label="Toggle theme">
@@ -461,7 +480,7 @@ _T["base.html"] = r"""<!DOCTYPE html>
   <main>{% block content %}{% endblock %}</main>
 
   <footer class="site-footer">
-    <p>Tạo bởi <em>epub-to-web</em></p>
+    <p>© <em>{{ site_name }}</em></p>
   </footer>
 
   <script src="{{ base_url }}/assets/app.js"></script>
@@ -477,7 +496,7 @@ _T["index.html"] = r"""{% extends "base.html" %}
 <div class="page-home">
   <div class="hero">
     <h1 class="hero-title">Thư viện</h1>
-    <p class="hero-sub">{{ books|length }} cuốn truyện</p>
+    <p class="hero-sub">{{ books|length }} tác phẩm trong thư viện</p>
   </div>
   <div class="book-grid wrap">
     {% for b in books %}
@@ -1460,8 +1479,8 @@ def main() -> None:
                     help="EPUB file or directory (default: ./books/)")
     ap.add_argument("output", nargs="?", default="output",
                     help="Output directory (default: ./output/)")
-    ap.add_argument("--site-name", default="Thư viện",
-                    help='Site title (default: "Thư viện")')
+    ap.add_argument("--site-name", default="Readr",
+                    help='Site title shown on every page (default: "Readr")')
     ap.add_argument("--base-url",  default="",
                     help="Base URL, e.g. https://yoursite.pages.dev")
     ap.add_argument("--no-cache",  action="store_true",
