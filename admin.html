@@ -23,174 +23,194 @@ body{font-family:var(--ff);background:var(--bg0);color:var(--tx);min-height:100v
 a{color:var(--ind2);text-decoration:none}
 a:hover{text-decoration:underline}
 button{font-family:inherit;cursor:pointer;border:none;outline:none}
-input,textarea,select{font-family:inherit;color:var(--tx);background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:.55rem .8rem;font-size:.88rem;width:100%;transition:border .15s}
-input:focus,textarea:focus{border-color:var(--ind);outline:none}
-label{display:block;font-size:.78rem;font-weight:500;color:var(--tx2);margin-bottom:.3rem;margin-top:.9rem}
+input,select{font-family:inherit;color:var(--tx);background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:.5rem .8rem;font-size:.88rem;width:100%;transition:border .15s}
+input:focus{border-color:var(--ind);outline:none}
+label{display:block;font-size:.77rem;font-weight:500;color:var(--tx2);margin-bottom:.3rem;margin-top:.85rem}
 label:first-child{margin-top:0}
 .hidden{display:none!important}
+code{font-size:.82rem;background:var(--bg3);padding:.1rem .35rem;border-radius:4px}
 
 /* ── Screens ── */
 .screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg0);z-index:100;padding:1rem}
-.screen-card{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r2);padding:2.5rem;width:100%;max-width:420px}
-.screen-card h1{font-size:1.35rem;font-weight:600;margin-bottom:.4rem}
-.screen-card p{color:var(--tx2);font-size:.88rem;margin-bottom:1.5rem}
+.screen-card{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r2);padding:2.5rem;width:100%;max-width:400px}
 .screen-logo{font-size:2rem;margin-bottom:1rem}
-.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.2rem;border-radius:var(--r);font-size:.85rem;font-weight:500;transition:opacity .15s,background .15s}
+.screen-card h1{font-size:1.3rem;font-weight:600;margin-bottom:.3rem}
+.screen-card p{color:var(--tx2);font-size:.85rem;margin-bottom:1.4rem}
+.form-err{color:var(--red);font-size:.78rem;margin-top:.5rem;display:none}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.55rem 1.1rem;border-radius:var(--r);font-size:.84rem;font-weight:500;transition:opacity .15s,background .15s;white-space:nowrap}
 .btn-primary{background:var(--ind);color:#fff}.btn-primary:hover{opacity:.85}
-.btn-ghost{background:var(--bg3);color:var(--tx2);border:1px solid var(--brd)}.btn-ghost:hover{background:var(--brd);color:var(--tx)}
-.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bg)}.btn-danger:hover{background:var(--red);color:#fff}
-.btn-sm{padding:.35rem .75rem;font-size:.78rem}
-.btn-full{width:100%;justify-content:center;margin-top:1rem}
-.form-err{color:var(--red);font-size:.8rem;margin-top:.5rem;display:none}
+.btn-ghost{background:var(--bg3);color:var(--tx2);border:1px solid var(--brd)}.btn-ghost:hover{background:var(--brd2);color:var(--tx)}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid transparent}.btn-danger:hover{background:var(--red);color:#fff}
+.btn-sm{padding:.3rem .7rem;font-size:.78rem}
+.btn-full{width:100%;margin-top:1rem}
+.btn:disabled{opacity:.4;cursor:not-allowed}
 
 /* ── Layout ── */
 #app{display:flex;height:100vh;overflow:hidden}
-.sidebar{width:220px;flex-shrink:0;background:var(--bg1);border-right:1px solid var(--brd);display:flex;flex-direction:column;overflow-y:auto}
-.sb-logo{padding:1.25rem 1rem .75rem;display:flex;align-items:center;gap:.6rem;border-bottom:1px solid var(--brd);margin-bottom:.5rem}
-.sb-logo-icon{font-size:1.4rem}
-.sb-logo-text{font-size:.95rem;font-weight:600;color:var(--tx)}
-.sb-logo-badge{font-size:.62rem;background:var(--ind-bg);color:var(--ind2);border-radius:4px;padding:.1rem .4rem;margin-left:.3rem}
-nav.sb-nav{flex:1;padding:.25rem .5rem}
-.sb-item{width:100%;display:flex;align-items:center;gap:.7rem;padding:.6rem .75rem;border-radius:var(--r);color:var(--tx2);font-size:.85rem;font-weight:400;background:none;border:none;cursor:pointer;text-align:left;transition:background .12s,color .12s;margin-bottom:.1rem}
+.sidebar{width:215px;flex-shrink:0;background:var(--bg1);border-right:1px solid var(--brd);display:flex;flex-direction:column}
+.sb-logo{padding:1.1rem 1rem .7rem;display:flex;align-items:center;gap:.55rem;border-bottom:1px solid var(--brd);margin-bottom:.4rem}
+.sb-logo-icon{font-size:1.3rem}
+.sb-logo-text{font-size:.92rem;font-weight:600;color:var(--tx)}
+.sb-badge{font-size:.6rem;background:var(--ind-bg);color:var(--ind2);border-radius:4px;padding:.1rem .4rem;margin-left:.2rem}
+nav{flex:1;padding:.2rem .5rem}
+.sb-item{width:100%;display:flex;align-items:center;gap:.65rem;padding:.55rem .7rem;border-radius:var(--r);color:var(--tx2);font-size:.83rem;background:none;border:none;cursor:pointer;text-align:left;transition:background .12s,color .12s;margin-bottom:.1rem}
 .sb-item:hover{background:var(--bg3);color:var(--tx)}
 .sb-item.active{background:var(--ind-bg);color:var(--ind2);font-weight:500}
-.sb-item svg{flex-shrink:0;opacity:.7}
-.sb-item.active svg{opacity:1}
-.sb-section{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);padding:.75rem .75rem .25rem}
-.sb-footer{padding:1rem;border-top:1px solid var(--brd);margin-top:auto}
-.sb-site-link{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--tx3);padding:.4rem .5rem;border-radius:6px;transition:color .12s,background .12s}
-.sb-site-link:hover{color:var(--tx2);background:var(--bg2);text-decoration:none}
+.sb-section{font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);padding:.65rem .7rem .2rem}
+.sb-footer{padding:.85rem;border-top:1px solid var(--brd);margin-top:auto}
+.sb-ext-link{display:flex;align-items:center;gap:.45rem;font-size:.78rem;color:var(--tx3);padding:.35rem .5rem;border-radius:6px;transition:color .12s,background .12s}
+.sb-ext-link:hover{color:var(--tx2);background:var(--bg2);text-decoration:none}
 
 .content{flex:1;overflow-y:auto;background:var(--bg0)}
-.panel{display:none;padding:2rem;max-width:1100px}
+.panel{display:none;padding:1.75rem 2rem;max-width:1080px}
 .panel.active{display:block}
-.panel-header{margin-bottom:1.75rem}
-.panel-title{font-size:1.35rem;font-weight:600}
-.panel-sub{color:var(--tx2);font-size:.85rem;margin-top:.25rem}
+.panel-hd{margin-bottom:1.5rem}
+.panel-hd h1{font-size:1.25rem;font-weight:600}
+.panel-hd p{color:var(--tx2);font-size:.82rem;margin-top:.2rem}
 
-/* ── Stats row ── */
-.stats-row{display:flex;gap:1rem;margin-bottom:1.75rem;flex-wrap:wrap}
-.stat-card{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:.9rem 1.2rem;flex:1;min-width:120px}
-.stat-val{font-size:1.8rem;font-weight:700;line-height:1}
-.stat-label{font-size:.75rem;color:var(--tx2);margin-top:.3rem}
+/* ── Stats ── */
+.stats-row{display:flex;gap:.85rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.stat{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:.85rem 1.1rem;flex:1;min-width:100px}
+.stat-val{font-size:1.6rem;font-weight:700;line-height:1}
+.stat-label{font-size:.72rem;color:var(--tx2);margin-top:.25rem}
+
+/* ── Divider with label ── */
+.section-label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);margin-bottom:.65rem;margin-top:1.5rem;display:flex;align-items:center;gap:.5rem}
+.section-label:first-child{margin-top:0}
+.section-label::after{content:'';flex:1;height:1px;background:var(--brd)}
 
 /* ── Book grid ── */
-.book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:1.25rem}
+.book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:1rem}
 .book-tile{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r2);overflow:hidden;transition:border .15s,transform .15s}
 .book-tile:hover{border-color:var(--brd2);transform:translateY(-2px)}
-.book-tile-cover{aspect-ratio:2/3;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--tx3);overflow:hidden}
-.book-tile-cover img{width:100%;height:100%;object-fit:cover}
-.book-tile-body{padding:.75rem}
-.book-tile-title{font-size:.88rem;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.book-tile-author{font-size:.75rem;color:var(--tx2);margin-top:.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.book-tile-meta{font-size:.7rem;color:var(--tx3);margin-top:.35rem}
-.book-tile-actions{display:flex;gap:.4rem;margin-top:.6rem}
-.empty-state{text-align:center;padding:4rem 1rem;color:var(--tx3)}
-.empty-icon{font-size:3rem;margin-bottom:.75rem}
-.empty-text{font-size:.9rem}
+.tile-cover{aspect-ratio:2/3;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:2.8rem;color:var(--tx3);overflow:hidden;position:relative}
+.tile-cover img{width:100%;height:100%;object-fit:cover}
+.tile-cover .tile-badge{position:absolute;top:.4rem;right:.4rem;font-size:.62rem;font-weight:600;padding:.15rem .45rem;border-radius:99px;background:var(--yel-bg);color:var(--yel)}
+.tile-cover .tile-badge.live{background:var(--grn-bg);color:var(--grn)}
+.tile-body{padding:.65rem}
+.tile-title{font-size:.84rem;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile-author{font-size:.72rem;color:var(--tx2);margin-top:.12rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile-meta{font-size:.68rem;color:var(--tx3);margin-top:.3rem}
+.tile-actions{display:flex;gap:.35rem;margin-top:.5rem}
+
+/* ── EPUB file list (uploaded, not yet built) ── */
+.epub-row{display:flex;align-items:center;gap:.75rem;padding:.6rem .75rem;background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);margin-bottom:.4rem}
+.epub-icon{font-size:1.1rem;flex-shrink:0}
+.epub-name{font-size:.85rem;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.epub-size{font-size:.72rem;color:var(--tx3);flex-shrink:0}
+.epub-status{flex-shrink:0}
+
+/* ── Empty state ── */
+.empty{text-align:center;padding:3.5rem 1rem;color:var(--tx3)}
+.empty-icon{font-size:2.8rem;margin-bottom:.65rem}
+.empty-text{font-size:.88rem}
 
 /* ── Upload ── */
-.upload-wrap{max-width:600px}
-.drop-zone{border:2px dashed var(--brd);border-radius:var(--r2);padding:3.5rem 2rem;text-align:center;cursor:pointer;transition:border .15s,background .15s;background:var(--bg1)}
-.drop-zone:hover,.drop-zone.dragover{border-color:var(--ind);background:var(--ind-bg)}
-.drop-icon{font-size:2.5rem;margin-bottom:.75rem}
-.drop-text{font-size:.9rem;color:var(--tx2)}
-.drop-hint{font-size:.78rem;color:var(--tx3);margin-top:.3rem}
+.upload-wrap{max-width:580px}
+.drop-zone{border:2px dashed var(--brd);border-radius:var(--r2);padding:3rem 2rem;text-align:center;cursor:pointer;transition:border .15s,background .15s;background:var(--bg1)}
+.drop-zone:hover,.drop-zone.over{border-color:var(--ind);background:var(--ind-bg)}
+.drop-icon{font-size:2.2rem;margin-bottom:.6rem}
+.drop-text{font-size:.88rem;color:var(--tx2)}
+.drop-hint{font-size:.76rem;color:var(--tx3);margin-top:.25rem}
 #file-input{display:none}
 
-.upload-queue{margin-top:1.5rem;display:flex;flex-direction:column;gap:.75rem}
-.queue-item{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:.85rem 1rem}
-.qi-header{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}
-.qi-name{font-size:.85rem;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qi-size{font-size:.75rem;color:var(--tx3);flex-shrink:0}
-.qi-remove{background:none;border:none;color:var(--tx3);cursor:pointer;padding:.1rem;line-height:1;font-size:1rem}.qi-remove:hover{color:var(--red)}
-.progress-track{background:var(--bg3);border-radius:99px;height:4px;overflow:hidden}
+.queue{margin-top:1.25rem;display:flex;flex-direction:column;gap:.6rem}
+.qi{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:.75rem .9rem}
+.qi-top{display:flex;align-items:center;gap:.55rem;margin-bottom:.4rem}
+.qi-name{font-size:.84rem;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qi-size{font-size:.72rem;color:var(--tx3);flex-shrink:0}
+.qi-rm{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:1rem;line-height:1;padding:.1rem;transition:color .12s}.qi-rm:hover{color:var(--red)}
+.progress-track{background:var(--bg3);border-radius:99px;height:3px;overflow:hidden}
 .progress-bar{height:100%;border-radius:99px;background:var(--ind);transition:width .3s;width:0%}
-.qi-status{font-size:.75rem;color:var(--tx2);margin-top:.35rem}
+.progress-bar.done{background:var(--grn)}
+.progress-bar.err{background:var(--red)}
+.qi-status{font-size:.74rem;color:var(--tx2);margin-top:.3rem}
 .qi-status.ok{color:var(--grn)}
 .qi-status.err{color:var(--red)}
-.upload-actions{display:flex;gap:.75rem;margin-top:1.25rem}
 
-/* ── Deployments ── */
-.deploy-list{display:flex;flex-direction:column;gap:.75rem}
-.deploy-card{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:1rem 1.1rem;display:flex;align-items:flex-start;gap:1rem}
-.deploy-status-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:.45rem}
-.dot-active{background:var(--grn);box-shadow:0 0 0 3px var(--grn-bg)}
+.upload-actions{display:flex;gap:.65rem;margin-top:1rem}
+
+/* ── Pipeline notice ── */
+.pipeline-notice{background:var(--bg2);border:1px solid var(--brd);border-left:3px solid var(--ind);border-radius:var(--r);padding:1rem 1.1rem;margin-top:1.25rem}
+.pipeline-notice h3{font-size:.85rem;font-weight:600;margin-bottom:.5rem}
+.pipeline-step{display:flex;align-items:center;gap:.65rem;padding:.35rem 0;font-size:.82rem;color:var(--tx2)}
+.pipeline-step svg{flex-shrink:0;width:14px;height:14px}
+.step-done{color:var(--grn)}
+.step-active{color:var(--yel)}
+.step-wait{color:var(--tx3)}
+
+/* ── Deploys ── */
+.deploy-card{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:.9rem 1rem;display:flex;align-items:flex-start;gap:.85rem;margin-bottom:.5rem}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:.45rem}
+.dot-ok{background:var(--grn);box-shadow:0 0 0 3px var(--grn-bg)}
 .dot-building{background:var(--yel);box-shadow:0 0 0 3px var(--yel-bg);animation:pulse 1.2s infinite}
-.dot-failed{background:var(--red)}
+.dot-fail{background:var(--red)}
 .dot-idle{background:var(--tx3)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.deploy-body{flex:1;min-width:0}
-.deploy-msg{font-size:.88rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.deploy-meta{font-size:.75rem;color:var(--tx2);margin-top:.2rem}
-.deploy-tags{display:flex;gap:.4rem;margin-top:.4rem;flex-wrap:wrap}
-.tag{font-size:.68rem;border-radius:99px;padding:.12rem .55rem;font-weight:500}
-.tag-grn{background:var(--grn-bg);color:var(--grn)}
-.tag-yel{background:var(--yel-bg);color:var(--yel)}
-.tag-red{background:var(--red-bg);color:var(--red)}
-.tag-def{background:var(--bg3);color:var(--tx2)}
-.deploy-link{flex-shrink:0;font-size:.75rem;color:var(--tx3)}
-.deploy-link:hover{color:var(--tx2)}
-.deploy-section-title{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);margin-bottom:.75rem;margin-top:1.5rem}
-.deploy-section-title:first-child{margin-top:0}
-.refresh-row{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem}
-.last-refresh{font-size:.78rem;color:var(--tx3)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.dc-body{flex:1;min-width:0}
+.dc-msg{font-size:.85rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dc-meta{font-size:.73rem;color:var(--tx2);margin-top:.15rem}
+.tags{display:flex;gap:.35rem;margin-top:.35rem;flex-wrap:wrap}
+.tag{font-size:.66rem;border-radius:99px;padding:.1rem .5rem;font-weight:500}
+.tg{background:var(--grn-bg);color:var(--grn)}
+.ty{background:var(--yel-bg);color:var(--yel)}
+.tr{background:var(--red-bg);color:var(--red)}
+.td{background:var(--bg3);color:var(--tx2)}
+.dc-link{flex-shrink:0;font-size:.72rem;color:var(--tx3)}.dc-link:hover{color:var(--tx2)}
 
 /* ── Settings ── */
-.settings-wrap{max-width:560px}
-.settings-section{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r2);padding:1.4rem 1.5rem;margin-bottom:1.25rem}
-.settings-section h3{font-size:.88rem;font-weight:600;margin-bottom:1.2rem;padding-bottom:.6rem;border-bottom:1px solid var(--brd)}
-.settings-row{display:flex;gap:.5rem;margin-top:.9rem}
-.settings-row:first-child{margin-top:0}
-.save-toast{display:none;align-items:center;gap:.4rem;font-size:.8rem;color:var(--grn);margin-left:.5rem}
+.settings-wrap{max-width:520px}
+.settings-card{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r2);padding:1.3rem 1.4rem;margin-bottom:1rem}
+.settings-card h3{font-size:.85rem;font-weight:600;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--brd)}
+.settings-row{display:flex;gap:.5rem;margin-top:.9rem;align-items:center}
 
-/* ── Toasts ── */
-#toast-container{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;flex-direction:column;gap:.5rem;z-index:500}
-.toast{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:.65rem 1rem;font-size:.82rem;display:flex;align-items:center;gap:.5rem;box-shadow:0 4px 16px rgba(0,0,0,.4);animation:slideIn .2s ease}
+/* ── Toast ── */
+#toasts{position:fixed;bottom:1.25rem;right:1.25rem;display:flex;flex-direction:column;gap:.4rem;z-index:500}
+.toast{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r);padding:.6rem .9rem;font-size:.8rem;display:flex;align-items:center;gap:.4rem;box-shadow:0 4px 16px rgba(0,0,0,.4);animation:toastIn .2s ease}
 .toast-ok{border-left:3px solid var(--grn)}
 .toast-err{border-left:3px solid var(--red)}
-@keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:none;opacity:1}}
+.toast-info{border-left:3px solid var(--ind)}
+@keyframes toastIn{from{transform:translateX(16px);opacity:0}to{transform:none;opacity:1}}
 
-/* ── Scrollbar ── */
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-track{background:transparent}
+/* ── Misc ── */
+::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:99px}
-
-/* ── Responsive ── */
 @media(max-width:640px){
-  .sidebar{width:56px}.sb-logo-text,.sb-logo-badge,.sb-item span,.sb-section,.sb-site-link span{display:none}
-  .sb-item{justify-content:center;padding:.65rem}
-  .panel{padding:1.25rem}
-  .stats-row{flex-wrap:wrap}
+  .sidebar{width:52px}
+  .sb-logo-text,.sb-badge,.sb-item span,.sb-section,.sb-ext-link span{display:none}
+  .sb-item{justify-content:center;padding:.6rem}
+  .panel{padding:1.2rem}
 }
 </style>
 </head>
 <body>
 
-<!-- ── Setup screen (first visit) ─────────────────────────────────────── -->
+<!-- Setup screen -->
 <div id="setup-screen" class="screen">
   <div class="screen-card">
     <div class="screen-logo">⚙️</div>
     <h1>Thiết lập lần đầu</h1>
-    <p>Kết nối admin UI với Cloudflare Worker của bạn.</p>
-    <form id="setup-form">
+    <p>Kết nối Admin UI với Cloudflare Worker của bạn.</p>
+    <form id="form-setup">
       <label>Worker URL</label>
       <input id="s-worker" type="url" placeholder="https://epub-to-web-api.workers.dev" required>
       <label>Mật khẩu Admin</label>
-      <input id="s-secret" type="password" placeholder="Nhập admin secret" required>
-      <div id="setup-err" class="form-err">Không thể kết nối tới Worker. Kiểm tra lại URL và secret.</div>
-      <button type="submit" class="btn btn-primary btn-full" id="setup-btn">Lưu & Kiểm tra kết nối</button>
+      <input id="s-secret" type="password" placeholder="Admin secret" required>
+      <div id="setup-err" class="form-err">Không kết nối được — kiểm tra lại URL và secret.</div>
+      <button type="submit" id="setup-btn" class="btn btn-primary btn-full">Lưu & Kiểm tra kết nối</button>
     </form>
   </div>
 </div>
 
-<!-- ── Login screen ────────────────────────────────────────────────────── -->
+<!-- Login screen -->
 <div id="login-screen" class="screen hidden">
   <div class="screen-card">
     <div class="screen-logo">🔐</div>
     <h1>Đăng nhập</h1>
     <p>Nhập mật khẩu để vào trang quản trị.</p>
-    <form id="login-form">
+    <form id="form-login">
       <label>Mật khẩu</label>
       <input id="l-pwd" type="password" placeholder="Admin password" required autofocus>
       <div id="login-err" class="form-err">Mật khẩu không đúng.</div>
@@ -199,598 +219,622 @@ nav.sb-nav{flex:1;padding:.25rem .5rem}
   </div>
 </div>
 
-<!-- ── Main App ────────────────────────────────────────────────────────── -->
+<!-- App -->
 <div id="app" class="hidden">
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sb-logo">
       <span class="sb-logo-icon">📚</span>
       <span class="sb-logo-text">epub-to-web</span>
-      <span class="sb-logo-badge">BETA</span>
+      <span class="sb-badge">BETA</span>
     </div>
-    <nav class="sb-nav">
-      <div class="sb-section">Quản lý</div>
+    <nav>
+      <div class="sb-section">Nội dung</div>
       <button class="sb-item active" data-tab="library">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         <span>Thư viện</span>
       </button>
       <button class="sb-item" data-tab="upload">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <span>Tải lên EPUB</span>
       </button>
       <div class="sb-section">Hệ thống</div>
       <button class="sb-item" data-tab="deploys">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         <span>Triển khai</span>
       </button>
       <button class="sb-item" data-tab="settings">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         <span>Cài đặt</span>
       </button>
     </nav>
     <div class="sb-footer">
-      <a href="../" target="_blank" class="sb-site-link">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      <a href="../" target="_blank" class="sb-ext-link">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         <span>Xem trang web</span>
       </a>
     </div>
   </aside>
 
-  <!-- Content -->
   <div class="content">
 
-    <!-- Library -->
+    <!-- ── Library ── -->
     <div id="panel-library" class="panel active">
-      <div class="panel-header">
-        <h1 class="panel-title">Thư viện</h1>
-        <p class="panel-sub">Tất cả truyện/sách đã chuyển đổi</p>
+      <div class="panel-hd">
+        <h1>Thư viện</h1>
+        <p>Truyện đã upload lên GitHub và truyện đã được build thành site</p>
       </div>
       <div class="stats-row" id="lib-stats"></div>
-      <div id="lib-books"></div>
+
+      <!-- Live books (built by CF Pages) -->
+      <div class="section-label">📗 Đã build &amp; live trên site</div>
+      <div id="lib-live"></div>
+
+      <!-- EPUBs in GitHub repo (uploaded, may not be built yet) -->
+      <div class="section-label" style="margin-top:1.75rem">📂 EPUB trong GitHub repo</div>
+      <p style="font-size:.78rem;color:var(--tx3);margin-bottom:.75rem">
+        Các file đã được push lên GitHub. Sẽ xuất hiện trong mục "Đã build" sau khi CF Pages hoàn thành rebuild (~2-3 phút).
+      </p>
+      <div id="lib-repo"></div>
+
+      <div style="margin-top:1.25rem;display:flex;gap:.5rem">
+        <button class="btn btn-ghost btn-sm" id="btn-lib-refresh">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.5 15a9 9 0 1 1-2.2-9.1L23 10"/></svg>
+          Làm mới
+        </button>
+        <span id="lib-refresh-time" style="font-size:.75rem;color:var(--tx3);line-height:2"></span>
+      </div>
     </div>
 
-    <!-- Upload -->
+    <!-- ── Upload ── -->
     <div id="panel-upload" class="panel">
-      <div class="panel-header">
-        <h1 class="panel-title">Tải lên EPUB</h1>
-        <p class="panel-sub">Kéo thả hoặc chọn file — Pipeline tự động chuyển đổi và deploy</p>
+      <div class="panel-hd">
+        <h1>Tải lên EPUB</h1>
+        <p>File sẽ được push lên GitHub → CF Pages tự động rebuild (~2-3 phút)</p>
       </div>
       <div class="upload-wrap">
         <div class="drop-zone" id="drop-zone">
           <input type="file" id="file-input" accept=".epub" multiple>
           <div class="drop-icon">📂</div>
           <div class="drop-text">Kéo thả file <strong>.epub</strong> vào đây</div>
-          <div class="drop-hint">hoặc click để chọn file · Có thể chọn nhiều file</div>
-        </div>
-        <div class="upload-queue" id="upload-queue"></div>
-        <div class="upload-actions" id="upload-actions" style="display:none">
-          <button class="btn btn-primary" id="btn-upload-all">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Tải lên tất cả
-          </button>
-          <button class="btn btn-ghost" id="btn-clear-queue">Xóa hàng chờ</button>
+          <div class="drop-hint">hoặc click để chọn · có thể chọn nhiều file</div>
         </div>
 
-        <!-- Pipeline status -->
-        <div id="pipeline" style="display:none;margin-top:1.5rem">
-          <div class="deploy-section-title">Trạng thái pipeline</div>
+        <div class="queue" id="queue"></div>
+
+        <div id="upload-actions" class="upload-actions hidden">
+          <button class="btn btn-primary" id="btn-upload">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Tải lên tất cả
+          </button>
+          <button class="btn btn-ghost" id="btn-clear">Xóa hàng chờ</button>
+        </div>
+
+        <!-- Pipeline notice — shown after successful upload -->
+        <div id="pipeline-notice" class="pipeline-notice hidden">
+          <h3>⏳ Pipeline đang chạy</h3>
           <div id="pipeline-steps"></div>
+          <p style="font-size:.75rem;color:var(--tx3);margin-top:.75rem">
+            Sau khi hoàn tất, vào tab <strong>Thư viện</strong> và nhấn <strong>Làm mới</strong> để thấy sách mới.
+          </p>
         </div>
       </div>
     </div>
 
-    <!-- Deployments -->
+    <!-- ── Deploys ── -->
     <div id="panel-deploys" class="panel">
-      <div class="panel-header">
-        <h1 class="panel-title">Triển khai</h1>
-        <p class="panel-sub">Lịch sử commit và trạng thái build</p>
+      <div class="panel-hd">
+        <h1>Triển khai</h1>
+        <p>Lịch sử push GitHub và trạng thái CF Pages build</p>
       </div>
-      <div class="refresh-row">
+      <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:1.25rem">
         <button class="btn btn-ghost btn-sm" id="btn-refresh-deploys">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.5 15a9 9 0 1 1-2.2-9.1L23 10"/></svg>
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.5 15a9 9 0 1 1-2.2-9.1L23 10"/></svg>
           Làm mới
         </button>
-        <span class="last-refresh" id="last-refresh-time"></span>
+        <span id="deploy-refresh-time" style="font-size:.75rem;color:var(--tx3)"></span>
       </div>
       <div id="deploys-content"></div>
     </div>
 
-    <!-- Settings -->
+    <!-- ── Settings ── -->
     <div id="panel-settings" class="panel">
-      <div class="panel-header">
-        <h1 class="panel-title">Cài đặt</h1>
-        <p class="panel-sub">Cấu hình kết nối và tùy chọn</p>
-      </div>
+      <div class="panel-hd"><h1>Cài đặt</h1></div>
       <div class="settings-wrap">
-        <div class="settings-section">
+
+        <div class="settings-card">
           <h3>🔌 Kết nối Worker</h3>
           <label>Worker URL</label>
-          <input id="cfg-worker" type="url" placeholder="https://your-worker.workers.dev">
+          <input id="cfg-worker" type="url" placeholder="https://epub-to-web-api.workers.dev">
           <label>Admin Secret</label>
           <input id="cfg-secret" type="password" placeholder="••••••••">
           <div class="settings-row">
-            <button class="btn btn-primary btn-sm" id="btn-save-conn">Lưu & Kiểm tra</button>
-            <span class="save-toast" id="conn-toast">✓ Đã lưu</span>
+            <button class="btn btn-primary btn-sm" id="btn-save-conn">Lưu &amp; Kiểm tra</button>
+            <span id="conn-ok" style="font-size:.78rem;color:var(--grn);display:none">✓ Kết nối OK</span>
           </div>
         </div>
 
-        <div class="settings-section">
-          <h3>🌐 Cloudflare Pages (tuỳ chọn)</h3>
-          <p style="font-size:.8rem;color:var(--tx2);margin-bottom:.75rem">
-            Điền để hiển thị trạng thái deployment thực trong tab Triển khai.
-            Thêm vào Worker secrets: <code style="background:var(--bg3);padding:.1rem .3rem;border-radius:4px">CF_API_TOKEN</code>, 
-            <code style="background:var(--bg3);padding:.1rem .3rem;border-radius:4px">CF_ACCOUNT_ID</code>, 
-            <code style="background:var(--bg3);padding:.1rem .3rem;border-radius:4px">CF_PAGES_PROJECT</code>
+        <div class="settings-card">
+          <h3>🌐 CF Pages Deployment Status (tuỳ chọn)</h3>
+          <p style="font-size:.8rem;color:var(--tx2);margin-bottom:.5rem">
+            Thêm các secrets sau vào Worker để thấy trạng thái deploy thực tế trong tab Triển khai:
+          </p>
+          <p style="font-size:.78rem;color:var(--tx3);line-height:1.8">
+            <code>CF_API_TOKEN</code> — CF API token (scope: Pages:Read)<br>
+            <code>CF_ACCOUNT_ID</code> — Account ID từ CF Dashboard<br>
+            <code>CF_PAGES_PROJECT</code> — Tên CF Pages project
           </p>
         </div>
 
-        <div class="settings-section">
+        <div class="settings-card">
+          <h3>💡 Giải thích về output</h3>
+          <p style="font-size:.8rem;color:var(--tx2);line-height:1.8">
+            Thư mục <code>output/</code> <strong>không</strong> được commit vào GitHub — nó được tạo ra bởi CF Pages trong quá trình build và serve trực tiếp. Bạn sẽ không thấy nó trong repo.<br><br>
+            EPUB files lưu tại: <code>books/*.epub</code> trong GitHub repo<br>
+            Sách đã build xem tại: <code>yoursite.pages.dev/slug/</code><br>
+            Manifest: <code>yoursite.pages.dev/books.json</code>
+          </p>
+        </div>
+
+        <div class="settings-card">
           <h3>🚪 Phiên đăng nhập</h3>
-          <p style="font-size:.8rem;color:var(--tx2);margin-bottom:.9rem">Đăng xuất sẽ xóa phiên hiện tại (cài đặt Worker vẫn được giữ).</p>
-          <button class="btn btn-ghost btn-sm" id="btn-logout">Đăng xuất</button>
-          <button class="btn btn-danger btn-sm" id="btn-reset" style="margin-left:.5rem">Xóa tất cả cài đặt</button>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-sm" id="btn-logout">Đăng xuất</button>
+            <button class="btn btn-danger btn-sm" id="btn-reset">Xóa tất cả cài đặt</button>
+          </div>
         </div>
       </div>
     </div>
 
-  </div><!-- /content -->
-</div><!-- /app -->
+  </div>
+</div>
 
-<div id="toast-container"></div>
+<div id="toasts"></div>
 
 <script>
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 //  STATE
-// ══════════════════════════════════════════════════════════════
-const APP = {
-  settings: null,   // { workerUrl, secret }
-  authed: false,
-  books: [],
-  queue: [],        // { file, status, progress, error }
-};
+// ══════════════════════════════════════════════════════
+const LS = 'epw-cfg';
+const SS = 'epw-auth';
+let CFG = null;
+let queue = [];   // { file, status:'pending'|'uploading'|'ok'|'err'|'skip', progress, msg }
 
-const LS_SETTINGS = 'epw-settings';
-const SS_AUTH     = 'epw-auth';
-
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 //  BOOT
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 function boot() {
-  const raw = localStorage.getItem(LS_SETTINGS);
-  APP.settings = raw ? JSON.parse(raw) : null;
-  APP.authed   = sessionStorage.getItem(SS_AUTH) === '1';
+  const raw = localStorage.getItem(LS);
+  CFG = raw ? JSON.parse(raw) : null;
+  const authed = sessionStorage.getItem(SS) === '1';
 
-  if (!APP.settings) {
-    show('setup-screen');
-  } else if (!APP.authed) {
-    show('login-screen');
-  } else {
-    launchApp();
-  }
+  if (!CFG) return show('setup-screen');
+  if (!authed) return show('login-screen');
+  launch();
 }
 
 function show(id) {
   ['setup-screen','login-screen','app'].forEach(x =>
-    document.getElementById(x).classList.toggle('hidden', x !== id)
-  );
+    document.getElementById(x).classList.toggle('hidden', x !== id));
 }
 
-function launchApp() {
+function launch() {
   show('app');
-  loadBooks();
-  document.getElementById('cfg-worker').value = APP.settings.workerUrl || '';
-  document.getElementById('cfg-secret').value = APP.settings.secret || '';
+  document.getElementById('cfg-worker').value = CFG.workerUrl || '';
+  document.getElementById('cfg-secret').value = CFG.secret || '';
+  loadLibrary();
 }
 
-// ══════════════════════════════════════════════════════════════
-//  AUTH / SETUP
-// ══════════════════════════════════════════════════════════════
-document.getElementById('setup-form').addEventListener('submit', async e => {
+// ══════════════════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════════════════
+document.getElementById('form-setup').addEventListener('submit', async e => {
   e.preventDefault();
-  const workerUrl = document.getElementById('s-worker').value.trim().replace(/\/$/, '');
+  const workerUrl = document.getElementById('s-worker').value.trim().replace(/\/$/,'');
   const secret    = document.getElementById('s-secret').value.trim();
-  const btn = document.getElementById('setup-btn');
-  btn.textContent = 'Đang kiểm tra…';
-  btn.disabled = true;
-
+  const btn       = document.getElementById('setup-btn');
+  btn.disabled = true; btn.textContent = 'Đang kiểm tra…';
   try {
-    const res = await fetch(`${workerUrl}/books`, {
-      headers: { Authorization: `Bearer ${secret}` }
-    });
-    if (!res.ok) throw new Error('Auth failed');
-    APP.settings = { workerUrl, secret };
-    localStorage.setItem(LS_SETTINGS, JSON.stringify(APP.settings));
-    sessionStorage.setItem(SS_AUTH, '1');
-    APP.authed = true;
-    launchApp();
+    const r = await fetch(`${workerUrl}/books`, { headers: { Authorization: `Bearer ${secret}` } });
+    if (!r.ok) throw new Error();
+    CFG = { workerUrl, secret };
+    localStorage.setItem(LS, JSON.stringify(CFG));
+    sessionStorage.setItem(SS, '1');
+    launch();
   } catch {
     document.getElementById('setup-err').style.display = 'block';
   } finally {
-    btn.textContent = 'Lưu & Kiểm tra kết nối';
-    btn.disabled = false;
+    btn.disabled = false; btn.textContent = 'Lưu & Kiểm tra kết nối';
   }
 });
 
-document.getElementById('login-form').addEventListener('submit', e => {
+document.getElementById('form-login').addEventListener('submit', e => {
   e.preventDefault();
-  const pwd = document.getElementById('l-pwd').value;
-  if (pwd === APP.settings.secret) {
-    sessionStorage.setItem(SS_AUTH, '1');
-    APP.authed = true;
-    launchApp();
+  if (document.getElementById('l-pwd').value === CFG.secret) {
+    sessionStorage.setItem(SS, '1');
+    launch();
   } else {
     document.getElementById('login-err').style.display = 'block';
   }
 });
 
-// ══════════════════════════════════════════════════════════════
-//  NAVIGATION
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════════════════
 document.querySelectorAll('.sb-item[data-tab]').forEach(btn => {
   btn.addEventListener('click', () => {
-    const tab = btn.dataset.tab;
     document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.getElementById(`panel-${tab}`).classList.add('active');
-    if (tab === 'deploys') loadDeploys();
+    document.getElementById(`panel-${btn.dataset.tab}`).classList.add('active');
+    if (btn.dataset.tab === 'deploys') loadDeploys();
   });
 });
 
-// ══════════════════════════════════════════════════════════════
-//  API HELPER
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  API
+// ══════════════════════════════════════════════════════
 async function api(path, opts = {}) {
-  const url = APP.settings.workerUrl + path;
-  const res = await fetch(url, {
+  const r = await fetch(CFG.workerUrl + path, {
     ...opts,
-    headers: {
-      Authorization: `Bearer ${APP.settings.secret}`,
-      ...(opts.headers || {}),
-    },
+    headers: { Authorization: `Bearer ${CFG.secret}`, ...(opts.headers || {}) },
   });
-  if (!res.ok) {
-    const t = await res.text();
-    throw new Error(t || `HTTP ${res.status}`);
+  if (!r.ok) {
+    let msg = `HTTP ${r.status}`;
+    try { const j = await r.json(); msg = j.error || msg; } catch {}
+    throw new Error(msg);
   }
-  return res.json();
+  return r.json();
 }
 
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 //  LIBRARY
-// ══════════════════════════════════════════════════════════════
-async function loadBooks() {
-  try {
-    // Fetch books.json from the generated site (relative to admin/)
-    const res = await fetch('../books.json?t=' + Date.now());
-    APP.books = res.ok ? await res.json() : [];
-  } catch {
-    APP.books = [];
-  }
-  renderLibrary();
+// ══════════════════════════════════════════════════════
+async function loadLibrary() {
+  // Fetch in parallel: generated site's books.json + repo EPUB list
+  const [siteRes, repoRes] = await Promise.allSettled([
+    fetch('../books.json?t=' + Date.now()).then(r => r.ok ? r.json() : []),
+    api('/books'),
+  ]);
+
+  const siteBooks  = siteRes.status  === 'fulfilled' ? (siteRes.value  || []) : [];
+  const repoFiles  = repoRes.status  === 'fulfilled' ? (repoRes.value.files || []) : [];
+
+  renderStats(siteBooks, repoFiles);
+  renderLiveBooks(siteBooks);
+  renderRepoFiles(repoFiles, siteBooks);
+
+  document.getElementById('lib-refresh-time').textContent =
+    'Làm mới: ' + new Date().toLocaleTimeString('vi-VN');
 }
 
-function renderLibrary() {
-  const stats = document.getElementById('lib-stats');
-  const grid  = document.getElementById('lib-books');
-  const total  = APP.books.length;
-  const chapters = APP.books.reduce((s, b) => s + (b.chapter_count || 0), 0);
-
-  stats.innerHTML = `
-    <div class="stat-card"><div class="stat-val">${total}</div><div class="stat-label">Truyện</div></div>
-    <div class="stat-card"><div class="stat-val">${chapters}</div><div class="stat-label">Tổng chương</div></div>
+function renderStats(books, files) {
+  const chCount = books.reduce((s, b) => s + (b.chapter_count || 0), 0);
+  document.getElementById('lib-stats').innerHTML = `
+    <div class="stat"><div class="stat-val">${books.length}</div><div class="stat-label">Sách đã build</div></div>
+    <div class="stat"><div class="stat-val">${chCount}</div><div class="stat-label">Tổng chương</div></div>
+    <div class="stat"><div class="stat-val">${files.length}</div><div class="stat-label">EPUB trong repo</div></div>
   `;
+}
 
-  if (!total) {
-    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">Chưa có truyện nào. Tải lên EPUB để bắt đầu.</div></div>`;
+function renderLiveBooks(books) {
+  const el = document.getElementById('lib-live');
+  if (!books.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Chưa có sách nào được build.<br>Tải lên EPUB và chờ CF Pages rebuild.</div></div>';
     return;
   }
-
-  grid.innerHTML = `<div class="book-grid">${APP.books.map(b => `
+  el.innerHTML = `<div class="book-grid">${books.map(b => `
     <div class="book-tile">
-      <div class="book-tile-cover">
+      <div class="tile-cover">
         ${b.has_cover
-          ? `<img src="../${b.slug}/images/cover${b.cover_ext || '.jpg'}" alt="${esc(b.title)}" loading="lazy">`
-          : b.title[0]}
+          ? `<img src="../${b.slug}/images/cover${b.cover_ext||'.jpg'}" alt="${esc(b.title)}" loading="lazy">`
+          : esc(b.title[0]||'?')}
+        <span class="tile-badge live">Live</span>
       </div>
-      <div class="book-tile-body">
-        <div class="book-tile-title" title="${esc(b.title)}">${esc(b.title)}</div>
-        <div class="book-tile-author">${esc(b.author || '—')}</div>
-        <div class="book-tile-meta">${b.chapter_count || 0} chương</div>
-        <div class="book-tile-actions">
+      <div class="tile-body">
+        <div class="tile-title" title="${esc(b.title)}">${esc(b.title)}</div>
+        <div class="tile-author">${esc(b.author||'')}</div>
+        <div class="tile-meta">${b.chapter_count||0} chương · <code>${b.slug}</code></div>
+        <div class="tile-actions">
           <a href="../${b.slug}/" target="_blank" class="btn btn-ghost btn-sm">Đọc</a>
-          <button class="btn btn-danger btn-sm" onclick="confirmDelete('${esc(b.slug)}','${esc(b.title)}')">Xóa</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteBook('${esc(b.slug)}','${esc(b.title)}')">Xóa</button>
         </div>
       </div>
     </div>
   `).join('')}</div>`;
 }
 
-async function confirmDelete(slug, title) {
-  if (!confirm(`Xóa "${title}" khỏi GitHub và rebuild site?\n\nHành động này không thể hoàn tác.`)) return;
+function renderRepoFiles(files, siteBooks) {
+  const el = document.getElementById('lib-repo');
+  const liveSlugs = new Set(siteBooks.map(b => b.slug));
+
+  if (!files.length) {
+    el.innerHTML = '<p style="font-size:.82rem;color:var(--tx3)">Chưa có file EPUB nào trong repo.</p>';
+    return;
+  }
+
+  el.innerHTML = files.map(f => {
+    // Guess if it's been built: check if any live book slug resembles the filename
+    const guessSlug = f.name.replace(/\.epub$/i,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    const isBuilt = liveSlugs.has(guessSlug) || [...liveSlugs].some(s => guessSlug.includes(s) || s.includes(guessSlug.slice(0,12)));
+    return `
+    <div class="epub-row">
+      <span class="epub-icon">📄</span>
+      <span class="epub-name" title="${esc(f.name)}">${esc(f.name)}</span>
+      <span class="epub-size">${fmtSize(f.size)}</span>
+      <span class="epub-status">
+        <span class="tag ${isBuilt ? 'tg' : 'ty'}">${isBuilt ? 'Built' : 'Pending build'}</span>
+      </span>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('btn-lib-refresh').addEventListener('click', loadLibrary);
+
+async function deleteBook(slug, title) {
+  if (!confirm(`Xóa "${title}" khỏi GitHub và rebuild site?`)) return;
   try {
-    // The worker deletes the .epub file; slug → filename needs mapping
-    // We'll try common patterns: slug.epub or original filename
-    // Worker /books endpoint returns actual filenames
-    const { files } = await api('/books');
-    const match = files.find(f => {
-      const base = f.name.replace(/\.epub$/i, '');
-      return base === slug || base.toLowerCase().includes(slug.replace(/-/g, ''));
-    });
-    if (!match) throw new Error('Không tìm thấy file EPUB trong repo');
-    await api(`/book/${encodeURIComponent(match.name)}`, { method: 'DELETE' });
-    toast('✓ Đã xóa. Site đang rebuild…', 'ok');
-    setTimeout(loadBooks, 2000);
+    await api(`/book/${encodeURIComponent(slug)}`, { method: 'DELETE' });
+    toast(`✓ Đã xóa "${title}". Site đang rebuild…`, 'ok');
+    setTimeout(loadLibrary, 3000);
   } catch (err) {
-    toast(`Lỗi: ${err.message}`, 'err');
+    toast(`Lỗi xóa: ${err.message}`, 'err');
   }
 }
 
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 //  UPLOAD
-// ══════════════════════════════════════════════════════════════
-const dropZone  = document.getElementById('drop-zone');
+// ══════════════════════════════════════════════════════
+const dropZone = document.getElementById('drop-zone');
 const fileInput = document.getElementById('file-input');
-const queueEl   = document.getElementById('upload-queue');
-const actionsEl = document.getElementById('upload-actions');
 
 dropZone.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', e => addToQueue([...e.target.files]));
-
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+fileInput.addEventListener('change', e => addFiles([...e.target.files]));
+dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('over'); });
+dropZone.addEventListener('dragleave', ()  => dropZone.classList.remove('over'));
 dropZone.addEventListener('drop', e => {
-  e.preventDefault();
-  dropZone.classList.remove('dragover');
+  e.preventDefault(); dropZone.classList.remove('over');
   const files = [...e.dataTransfer.files].filter(f => f.name.toLowerCase().endsWith('.epub'));
-  if (files.length) addToQueue(files);
-  else toast('Chỉ nhận file .epub', 'err');
+  if (!files.length) { toast('Chỉ nhận file .epub', 'err'); return; }
+  addFiles(files);
 });
 
-function addToQueue(files) {
-  files.forEach(file => {
-    if (!file.name.toLowerCase().endsWith('.epub')) return;
-    if (APP.queue.find(q => q.file.name === file.name)) return;
-    APP.queue.push({ file, status: 'pending', progress: 0, error: null });
+function addFiles(files) {
+  files.forEach(f => {
+    if (!f.name.toLowerCase().endsWith('.epub')) return;
+    if (queue.find(q => q.file.name === f.name && q.status !== 'err')) return;
+    queue.push({ file: f, status: 'pending', progress: 0, msg: 'Chờ tải lên' });
   });
   renderQueue();
 }
 
 function renderQueue() {
-  queueEl.innerHTML = APP.queue.map((item, i) => `
-    <div class="queue-item" id="qi-${i}">
-      <div class="qi-header">
-        <span class="qi-name">${esc(item.file.name)}</span>
-        <span class="qi-size">${fmtSize(item.file.size)}</span>
-        ${item.status === 'pending' ? `<button class="qi-remove" onclick="removeFromQueue(${i})">×</button>` : ''}
+  const el = document.getElementById('queue');
+  el.innerHTML = queue.map((q, i) => `
+    <div class="qi">
+      <div class="qi-top">
+        <span class="qi-name">${esc(q.file.name)}</span>
+        <span class="qi-size">${fmtSize(q.file.size)}</span>
+        ${q.status === 'pending' ? `<button class="qi-rm" onclick="removeQ(${i})">×</button>` : ''}
       </div>
-      <div class="progress-track"><div class="progress-bar" id="pb-${i}" style="width:${item.progress}%"></div></div>
-      <div class="qi-status ${item.status === 'ok' ? 'ok' : item.status === 'error' ? 'err' : ''}" id="qs-${i}">
-        ${{ pending: 'Chờ tải lên', uploading: 'Đang tải lên GitHub…', reading: 'Đang đọc file…', ok: '✓ Đã tải lên — site đang rebuild', error: `✗ ${item.error || 'Lỗi'}` }[item.status] || item.status}
+      <div class="progress-track">
+        <div class="progress-bar ${q.status==='ok'||q.status==='skip'?'done':q.status==='err'?'err':''}"
+             style="width:${q.progress}%"></div>
       </div>
+      <div class="qi-status ${q.status==='ok'||q.status==='skip'?'ok':q.status==='err'?'err':''}">${esc(q.msg)}</div>
     </div>
   `).join('');
-  actionsEl.style.display = APP.queue.length ? 'flex' : 'none';
+  document.getElementById('upload-actions').classList.toggle('hidden', !queue.length);
 }
 
-function removeFromQueue(i) {
-  APP.queue.splice(i, 1);
-  renderQueue();
-}
+function removeQ(i) { queue.splice(i, 1); renderQueue(); }
 
-document.getElementById('btn-clear-queue').addEventListener('click', () => {
-  APP.queue = APP.queue.filter(q => q.status === 'uploading');
+document.getElementById('btn-clear').addEventListener('click', () => {
+  queue = queue.filter(q => q.status === 'uploading');
   renderQueue();
+  document.getElementById('pipeline-notice').classList.add('hidden');
 });
 
-document.getElementById('btn-upload-all').addEventListener('click', () => {
-  const pending = APP.queue.filter(q => q.status === 'pending');
-  if (!pending.length) return;
-  pending.forEach((_, idx) => {
-    const realIdx = APP.queue.indexOf(_);
-    uploadItem(realIdx);
-  });
+document.getElementById('btn-upload').addEventListener('click', () => {
+  queue.forEach((_, i) => { if (queue[i].status === 'pending') uploadOne(i); });
 });
 
-async function uploadItem(i) {
-  const item = APP.queue[i];
-  if (!item || item.status === 'uploading' || item.status === 'ok') return;
+async function uploadOne(i) {
+  const q = queue[i];
+  if (!q || q.status === 'uploading' || q.status === 'ok' || q.status === 'skip') return;
 
-  item.status = 'reading';
-  item.progress = 10;
+  q.status = 'uploading'; q.progress = 15; q.msg = 'Đang đọc file…';
   renderQueue();
 
   try {
-    // Read file as base64 in the browser (no Worker CPU needed)
-    const base64 = await new Promise((res, rej) => {
-      const reader = new FileReader();
-      reader.onload = e => res(e.target.result.split(',')[1]);
-      reader.onerror = rej;
-      reader.readAsDataURL(item.file);
+    // Encode in browser — no heavy lifting for Worker
+    const b64 = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = e => res(e.target.result.split(',')[1]);
+      r.onerror = rej;
+      r.readAsDataURL(q.file);
     });
 
-    item.status = 'uploading';
-    item.progress = 40;
+    q.progress = 50; q.msg = 'Đang push lên GitHub…';
     renderQueue();
 
-    await api('/upload', {
+    const data = await api('/upload', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filename: item.file.name, content: base64 }),
+      body: JSON.stringify({ filename: q.file.name, content: b64 }),
     });
 
-    item.status = 'ok';
-    item.progress = 100;
+    if (data.note) {
+      // File unchanged — not an error
+      q.status = 'skip'; q.progress = 100;
+      q.msg = `✓ File không đổi — không cần rebuild (${data.note})`;
+    } else {
+      q.status = 'ok'; q.progress = 100;
+      q.msg = `✓ Đã push lên GitHub (commit ${data.commit || '—'})`;
+      showPipeline();
+    }
     renderQueue();
-    showPipeline();
-    toast(`✓ ${item.file.name} đã được tải lên`, 'ok');
-
-    // Auto-reload books after rebuild (optimistic ~2min delay)
-    setTimeout(loadBooks, 5000);
+    toast(`✓ ${q.file.name}`, 'ok');
   } catch (err) {
-    item.status = 'error';
-    item.error = err.message;
-    item.progress = 0;
+    q.status = 'err'; q.progress = 0;
+    q.msg = `✗ ${err.message}`;
     renderQueue();
     toast(`Lỗi: ${err.message}`, 'err');
   }
 }
 
+// ── Pipeline notice (honest timing) ─────────────────
 function showPipeline() {
-  const el = document.getElementById('pipeline');
-  el.style.display = 'block';
+  const notice = document.getElementById('pipeline-notice');
+  notice.classList.remove('hidden');
+
   const steps = [
-    { label: 'File được push lên GitHub repo', delay: 0,    done: true },
-    { label: 'Cloudflare Pages phát hiện commit mới', delay: 5000,  done: false },
-    { label: 'Chạy epub_to_web.py (convert + generate)', delay: 15000, done: false },
-    { label: 'Deploy hoàn tất — site đã cập nhật', delay: 90000, done: false },
+    { label: 'File được push lên GitHub repo', done: true,  ms: 0 },
+    { label: 'CF Pages phát hiện commit và bắt đầu build', done: false, ms: 15000 },
+    { label: 'pip install + python epub_to_web.py đang chạy', done: false, ms: 45000 },
+    { label: 'Deploy hoàn tất — nhấn "Làm mới" ở Thư viện', done: false, ms: 150000 },
   ];
-  const stepsEl = document.getElementById('pipeline-steps');
-  function render() {
-    stepsEl.innerHTML = steps.map((s, i) => `
-      <div class="deploy-card" style="margin-bottom:.5rem">
-        <div class="deploy-status-dot ${s.done ? 'dot-active' : i === steps.findIndex(x => !x.done) ? 'dot-building' : 'dot-idle'}"></div>
-        <div class="deploy-body">
-          <div class="deploy-msg">${esc(s.label)}</div>
-        </div>
-        ${s.done ? '<span class="tag tag-grn">✓</span>' : ''}
-      </div>
-    `).join('');
-  }
+
+  const el = document.getElementById('pipeline-steps');
+  const render = () => {
+    const now = Date.now();
+    el.innerHTML = steps.map((s, i) => {
+      const isActive = !s.done && (i === 0 || steps[i-1].done);
+      return `
+      <div class="pipeline-step ${s.done?'step-done':isActive?'step-active':'step-wait'}">
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          ${s.done
+            ? '<polyline points="20 6 9 17 4 12"/>'
+            : isActive
+              ? '<circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'
+              : '<circle cx="12" cy="12" r="9"/>'}
+        </svg>
+        ${esc(s.label)}
+      </div>`;
+    }).join('');
+  };
+
   render();
+  const startTime = Date.now();
   steps.forEach((s, i) => {
-    if (s.delay > 0) {
-      setTimeout(() => { steps[i].done = true; render(); }, s.delay);
+    if (s.ms > 0) {
+      setTimeout(() => { steps[i].done = true; render(); }, s.ms);
     }
   });
 }
 
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 //  DEPLOYMENTS
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 async function loadDeploys() {
-  document.getElementById('deploys-content').innerHTML = '<p style="color:var(--tx3);font-size:.85rem">Đang tải…</p>';
+  document.getElementById('deploys-content').innerHTML =
+    '<p style="color:var(--tx3);font-size:.83rem">Đang tải…</p>';
   try {
     const { commits, deploys } = await api('/status');
     renderDeploys(commits, deploys);
-    document.getElementById('last-refresh-time').textContent = 'Cập nhật: ' + new Date().toLocaleTimeString('vi-VN');
+    document.getElementById('deploy-refresh-time').textContent =
+      'Cập nhật: ' + new Date().toLocaleTimeString('vi-VN');
   } catch (err) {
-    document.getElementById('deploys-content').innerHTML = `<p style="color:var(--red);font-size:.85rem">Lỗi: ${esc(err.message)}</p>`;
+    document.getElementById('deploys-content').innerHTML =
+      `<p style="color:var(--red);font-size:.83rem">Lỗi: ${esc(err.message)}</p>`;
   }
 }
 
 function renderDeploys(commits, deploys) {
   let html = '';
 
-  if (deploys && deploys.length) {
-    html += '<div class="deploy-section-title">🚀 Cloudflare Pages Deployments</div>';
-    html += '<div class="deploy-list">' + deploys.map(d => {
-      const statusMap = {
-        success: ['dot-active', 'tag-grn', 'Thành công'],
-        active:  ['dot-active', 'tag-grn', 'Live'],
-        failure: ['dot-failed', 'tag-red', 'Thất bại'],
-        building:['dot-building','tag-yel','Đang build'],
-      };
-      const [dot, tag, label] = statusMap[d.status] || ['dot-idle', 'tag-def', d.status || '?'];
+  if (deploys?.length) {
+    html += `<div class="section-label">🚀 CF Pages Deployments</div>`;
+    html += deploys.map(d => {
+      const [dot,tag,lbl] = {
+        success: ['dot-ok','tg','Thành công'],
+        active:  ['dot-ok','tg','Live'],
+        failure: ['dot-fail','tr','Thất bại'],
+        building:['dot-building','ty','Đang build'],
+      }[d.status] || ['dot-idle','td', d.status || '?'];
       return `
-        <div class="deploy-card">
-          <div class="deploy-status-dot ${dot}"></div>
-          <div class="deploy-body">
-            <div class="deploy-msg">${esc(d.branch || 'main')} — ${esc(d.id || '')}</div>
-            <div class="deploy-meta">${fmtDate(d.created_on)}</div>
-            <div class="deploy-tags"><span class="tag ${tag}">${label}</span></div>
-          </div>
-          ${d.url ? `<a href="${d.url}" target="_blank" class="deploy-link">↗</a>` : ''}
-        </div>`;
-    }).join('') + '</div>';
-  }
-
-  html += '<div class="deploy-section-title">📝 GitHub Commits gần đây</div>';
-  if (!commits.length) {
-    html += '<p style="color:var(--tx3);font-size:.85rem">Chưa có commit nào.</p>';
-  } else {
-    html += '<div class="deploy-list">' + commits.map(c => `
       <div class="deploy-card">
-        <div class="deploy-status-dot dot-active"></div>
-        <div class="deploy-body">
-          <div class="deploy-msg">${esc(c.message || '')}</div>
-          <div class="deploy-meta">${esc(c.author || '')} · ${fmtDate(c.date)}</div>
-          <div class="deploy-tags"><span class="tag tag-def">${esc(c.sha || '')}</span></div>
+        <div class="dot ${dot}"></div>
+        <div class="dc-body">
+          <div class="dc-msg">${esc(d.branch||'main')} · ${esc(d.id||'')}</div>
+          <div class="dc-meta">${fmtDate(d.created_on)}</div>
+          <div class="tags"><span class="tag ${tag}">${lbl}</span><span class="tag td">${esc(d.stage||'')}</span></div>
         </div>
-        ${c.url ? `<a href="${c.url}" target="_blank" class="deploy-link">↗</a>` : ''}
-      </div>`).join('') + '</div>';
+        ${d.url ? `<a href="${d.url}" target="_blank" class="dc-link">↗</a>` : ''}
+      </div>`;
+    }).join('');
+  } else if (deploys === null) {
+    html += `<div class="section-label">🚀 CF Pages Deployments</div>
+    <p style="font-size:.8rem;color:var(--tx3);margin-bottom:1.25rem">
+      Chưa cấu hình. Thêm <code>CF_API_TOKEN</code>, <code>CF_ACCOUNT_ID</code>,
+      <code>CF_PAGES_PROJECT</code> vào Worker secrets để thấy trạng thái deploy thực tế.
+    </p>`;
   }
 
+  html += `<div class="section-label" style="margin-top:${deploys?'1.5rem':'0'}">📝 GitHub Commits (books/)</div>`;
+  if (!commits.length) {
+    html += '<p style="font-size:.82rem;color:var(--tx3)">Chưa có commit nào.</p>';
+  } else {
+    html += commits.map(c => `
+    <div class="deploy-card">
+      <div class="dot dot-ok"></div>
+      <div class="dc-body">
+        <div class="dc-msg">${esc(c.message||'')}</div>
+        <div class="dc-meta">${esc(c.author||'')} · ${fmtDate(c.date)}</div>
+        <div class="tags"><span class="tag td">${esc(c.sha||'')}</span></div>
+      </div>
+      ${c.url ? `<a href="${c.url}" target="_blank" class="dc-link">↗</a>` : ''}
+    </div>`).join('');
+  }
   document.getElementById('deploys-content').innerHTML = html;
 }
 
 document.getElementById('btn-refresh-deploys').addEventListener('click', loadDeploys);
 
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 //  SETTINGS
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 document.getElementById('btn-save-conn').addEventListener('click', async () => {
-  const workerUrl = document.getElementById('cfg-worker').value.trim().replace(/\/$/, '');
+  const workerUrl = document.getElementById('cfg-worker').value.trim().replace(/\/$/,'');
   const secret    = document.getElementById('cfg-secret').value.trim();
   try {
-    const res = await fetch(`${workerUrl}/books`, {
-      headers: { Authorization: `Bearer ${secret}` }
-    });
-    if (!res.ok) throw new Error();
-    APP.settings = { workerUrl, secret };
-    localStorage.setItem(LS_SETTINGS, JSON.stringify(APP.settings));
-    const toast = document.getElementById('conn-toast');
-    toast.style.display = 'flex';
-    setTimeout(() => toast.style.display = 'none', 2000);
+    const r = await fetch(`${workerUrl}/books`, { headers: { Authorization: `Bearer ${secret}` } });
+    if (!r.ok) throw new Error();
+    CFG = { workerUrl, secret };
+    localStorage.setItem(LS, JSON.stringify(CFG));
+    const ok = document.getElementById('conn-ok');
+    ok.style.display = 'inline'; setTimeout(() => ok.style.display = 'none', 2500);
+    toast('✓ Cài đặt đã được lưu', 'ok');
   } catch {
-    alert('Không kết nối được. Kiểm tra lại URL và secret.');
+    toast('Không kết nối được — kiểm tra lại URL và secret', 'err');
   }
 });
-
 document.getElementById('btn-logout').addEventListener('click', () => {
-  sessionStorage.removeItem(SS_AUTH);
-  location.reload();
+  sessionStorage.removeItem(SS); location.reload();
 });
-
 document.getElementById('btn-reset').addEventListener('click', () => {
-  if (confirm('Xóa tất cả cài đặt (Worker URL, secret)?')) {
-    localStorage.removeItem(LS_SETTINGS);
-    sessionStorage.removeItem(SS_AUTH);
-    location.reload();
+  if (confirm('Xóa tất cả cài đặt đã lưu?')) {
+    localStorage.removeItem(LS); sessionStorage.removeItem(SS); location.reload();
   }
 });
 
-// ══════════════════════════════════════════════════════════════
-//  TOASTS
-// ══════════════════════════════════════════════════════════════
-function toast(msg, type = 'ok') {
+// ══════════════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════════════
+function toast(msg, type='info') {
   const el = document.createElement('div');
   el.className = `toast toast-${type}`;
   el.textContent = msg;
-  document.getElementById('toast-container').appendChild(el);
-  setTimeout(() => el.remove(), 4000);
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 4500);
 }
 
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 //  UTILS
-// ══════════════════════════════════════════════════════════════
-function esc(s) {
-  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function fmtSize(bytes) {
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
-  return (bytes/(1024*1024)).toFixed(1) + ' MB';
-}
-function fmtDate(iso) {
-  if (!iso) return '';
-  try { return new Date(iso).toLocaleString('vi-VN', { dateStyle:'short', timeStyle:'short' }); }
-  catch { return iso; }
-}
+// ══════════════════════════════════════════════════════
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmtSize = b => b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB';
+const fmtDate = iso => { try { return new Date(iso).toLocaleString('vi-VN',{dateStyle:'short',timeStyle:'short'}); } catch { return iso||''; } };
 
-// ══════════════════════════════════════════════════════════════
-//  BOOT
-// ══════════════════════════════════════════════════════════════
 boot();
 </script>
 </body>
