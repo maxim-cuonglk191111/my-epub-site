@@ -15,7 +15,7 @@ Cloudflare Pages settings:
     Output directory : output
 """
 
-import os, sys, json, re, shutil, unicodedata, argparse
+import os, sys, json, re, shutil, unicodedata, argparse, warnings
 from pathlib import Path
 
 # ── Dependency check ──────────────────────────────────────────────────────────
@@ -38,6 +38,14 @@ if _missing:
     print(f"❌ Missing: {', '.join(_missing)}")
     print(f"   Run: pip install {' '.join(_missing)} lxml")
     sys.exit(1)
+
+# Suppress noisy BeautifulSoup warning when parsing EPUB XML as HTML
+try:
+    from bs4 import XMLParsedAsHTMLWarning
+    warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
+except ImportError:
+    pass
+warnings.filterwarnings("ignore", message="It looks like you're parsing an XML document")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -101,6 +109,46 @@ def clean_html(raw: str, img_map: dict | None = None) -> str:
 #  EPUB PARSER
 # ══════════════════════════════════════════════════════════════════════════════
 
+def find_cover_item(book):
+    """
+    Locate the cover image item in an EPUB using multiple fallback strategies:
+    1. EPUB3 item with properties="cover-image"
+    2. EPUB2 <meta name="cover" content="item-id"> OPF metadata
+    3. Any image whose filename contains "cover"
+    4. First image in the book (most EPUBs put cover first)
+    """
+    items = list(book.get_items_of_type(ebooklib.ITEM_IMAGE))
+    if not items:
+        return None
+
+    # Strategy 1 — EPUB3 cover-image property
+    for item in items:
+        props = getattr(item, "properties", None) or []
+        if isinstance(props, str):
+            props = props.split()
+        if "cover-image" in props:
+            return item
+
+    # Strategy 2 — EPUB2 OPF <meta name="cover">
+    try:
+        cover_meta = book.get_metadata("OPF", "cover")
+        if cover_meta:
+            cover_id = cover_meta[0][0]
+            item = book.get_item_with_id(cover_id)
+            if item and item.get_type() == ebooklib.ITEM_IMAGE:
+                return item
+    except Exception:
+        pass
+
+    # Strategy 3 — filename contains "cover"
+    for item in items:
+        if "cover" in Path(item.file_name).stem.lower():
+            return item
+
+    # Strategy 4 — first image (heuristic)
+    return items[0]
+
+
 def parse_epub(epub_path: Path, book_out_dir: Path) -> dict:
     """
     Parse an EPUB file.
@@ -123,7 +171,9 @@ def parse_epub(epub_path: Path, book_out_dir: Path) -> dict:
     if description:
         description = BeautifulSoup(description, "lxml").get_text()
 
-    slug = slugify(title)
+    # Use the directory name as slug so it's always consistent with the
+    # book_out_dir that was already created by main() from the filename slug.
+    slug = book_out_dir.name
     print(f"    Title  : {title}")
     print(f"    Author : {author}")
     print(f"    Slug   : {slug}")
@@ -136,17 +186,25 @@ def parse_epub(epub_path: Path, book_out_dir: Path) -> dict:
     has_cover   = False
     cover_ext   = ".jpg"
 
+    # Identify cover item upfront using robust multi-strategy detection
+    cover_item    = find_cover_item(book)
+    cover_item_id = cover_item.file_name if cover_item else None
+
     for item in book.get_items_of_type(ebooklib.ITEM_IMAGE):
         name = Path(item.file_name).name
         dest = img_dir / name
         dest.write_bytes(item.get_content())
         img_map[item.file_name] = f"images/{name}"
 
-        if "cover" in name.lower() or "cover" in item.file_name.lower():
+        if item.file_name == cover_item_id:
             has_cover = True
-            ext = Path(name).suffix or ".jpg"
+            ext       = Path(name).suffix or ".jpg"
             cover_ext = ext
-            shutil.copy(dest, img_dir / f"cover{ext}")
+            cover_dest = img_dir / f"cover{ext}"
+            # Guard against SameFileError when image is already named cover.*
+            if dest.resolve() != cover_dest.resolve():
+                shutil.copy(dest, cover_dest)
+            img_map[item.file_name] = f"images/cover{ext}"  # remap to canonical name
 
     # ── TOC map ───────────────────────────────────────────────────────────────
     toc_map: dict[str, str] = {}  # file_name → chapter title
