@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin — epub-to-web</title>
+<title>Readr · Admin</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -215,11 +215,11 @@ nav{flex:1;padding:.2rem .5rem}
 <div id="setup-screen" class="screen">
   <div class="screen-card">
     <div class="screen-logo">⚙️</div>
-    <h1>Thiết lập lần đầu</h1>
-    <p>Kết nối Admin UI với Cloudflare Worker của bạn.</p>
+    <h1>Chào mừng đến Readr</h1>
+    <p>Kết nối với Cloudflare Worker để bắt đầu quản lý thư viện.</p>
     <form id="form-setup">
       <label>Worker URL</label>
-      <input id="s-worker" type="url" placeholder="https://epub-to-web-api.workers.dev" required>
+      <input id="s-worker" type="url" placeholder="https://readr-api.workers.dev" required>
       <label>Mật khẩu Admin</label>
       <input id="s-secret" type="password" placeholder="Admin secret" required>
       <div id="setup-err" class="form-err">Không kết nối được — kiểm tra lại URL và secret.</div>
@@ -232,8 +232,8 @@ nav{flex:1;padding:.2rem .5rem}
 <div id="login-screen" class="screen hidden">
   <div class="screen-card">
     <div class="screen-logo">🔐</div>
-    <h1>Đăng nhập</h1>
-    <p>Nhập mật khẩu để vào trang quản trị.</p>
+    <h1>Readr Admin</h1>
+    <p>Nhập mật khẩu để vào bảng điều khiển.</p>
     <form id="form-login">
       <label>Mật khẩu</label>
       <input id="l-pwd" type="password" placeholder="Admin password" required autofocus>
@@ -247,8 +247,8 @@ nav{flex:1;padding:.2rem .5rem}
 <div id="app" class="hidden">
   <aside class="sidebar">
     <div class="sb-logo">
-      <span class="sb-logo-icon">📚</span>
-      <span class="sb-logo-text">epub-to-web</span>
+      <span class="sb-logo-icon">✦</span>
+      <span class="sb-logo-text">Readr</span>
       <span class="sb-badge">BETA</span>
       <button id="admin-theme-btn" class="icon-btn" style="margin-left:auto;flex-shrink:0" title="Đổi giao diện">
         <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -288,8 +288,8 @@ nav{flex:1;padding:.2rem .5rem}
     <!-- ── Library ── -->
     <div id="panel-library" class="panel active">
       <div class="panel-hd">
-        <h1>Thư viện</h1>
-        <p>Truyện đã upload lên GitHub và truyện đã được build thành site</p>
+        <h1>Kho sách</h1>
+        <p>Sách đã upload và trạng thái build trên Readr</p>
       </div>
       <div class="stats-row" id="lib-stats"></div>
 
@@ -316,7 +316,7 @@ nav{flex:1;padding:.2rem .5rem}
     <!-- ── Upload ── -->
     <div id="panel-upload" class="panel">
       <div class="panel-hd">
-        <h1>Tải lên EPUB</h1>
+        <h1>Thêm sách mới</h1>
         <p>File sẽ được push lên GitHub → CF Pages tự động rebuild (~2-3 phút)</p>
       </div>
       <div class="upload-wrap">
@@ -351,7 +351,7 @@ nav{flex:1;padding:.2rem .5rem}
     <!-- ── Deploys ── -->
     <div id="panel-deploys" class="panel">
       <div class="panel-hd">
-        <h1>Triển khai</h1>
+        <h1>Lịch sử triển khai</h1>
         <p>Lịch sử push GitHub và trạng thái CF Pages build</p>
       </div>
       <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:1.25rem">
@@ -366,7 +366,7 @@ nav{flex:1;padding:.2rem .5rem}
 
     <!-- ── Settings ── -->
     <div id="panel-settings" class="panel">
-      <div class="panel-hd"><h1>Cài đặt</h1></div>
+      <div class="panel-hd"><h1>Cấu hình</h1></div>
       <div class="settings-wrap">
 
         <div class="settings-card">
@@ -538,7 +538,7 @@ async function loadLibrary() {
 function renderStats(books, files) {
   const chCount = books.reduce((s, b) => s + (b.chapter_count || 0), 0);
   document.getElementById('lib-stats').innerHTML = `
-    <div class="stat"><div class="stat-val">${books.length}</div><div class="stat-label">Sách đã build</div></div>
+    <div class="stat"><div class="stat-val">${books.length}</div><div class="stat-label">Đã xuất bản</div></div>
     <div class="stat"><div class="stat-val">${chCount}</div><div class="stat-label">Tổng chương</div></div>
     <div class="stat"><div class="stat-val">${files.length}</div><div class="stat-label">EPUB trong repo</div></div>
   `;
