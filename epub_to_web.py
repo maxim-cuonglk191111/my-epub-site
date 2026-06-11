@@ -919,8 +919,14 @@ def main() -> None:
         sys.exit(1)
 
     if not epub_files:
-        print(f"❌  No .epub files in: {src}")
-        sys.exit(1)
+        print(f"⚠️   No .epub files in: {src} — generating empty site (normal on first deploy)")
+        generate_site(
+            books_full=[], books_cached=[],
+            output_dir=output_dir,
+            site_name=args.site_name,
+            base_url=args.base_url,
+        )
+        sys.exit(0)  # exit 0 = success so CF Pages build passes
 
     print(f"📚  Found {len(epub_files)} EPUB file(s)")
 
