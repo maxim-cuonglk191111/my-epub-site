@@ -126,15 +126,20 @@ _BAD_TITLES: set[str] = {
 }
 
 def _is_bad_title(s: str) -> bool:
-    """Return True if s looks like a section name, not a real book title."""
+    """Return True if s looks like a section/chapter name, not a real book title."""
     if not s or len(s.strip()) < 2:
         return True
-    t = s.strip().lower()
-    if t in _BAD_TITLES:
+    base = s.strip().lower()
+    # Exact match (e.g. "About the Author")
+    if base in _BAD_TITLES:
         return True
-    # Short ALL-CAPS text (e.g. "THE END", "FOREWORD", "EPILOGUE")
-    stripped = s.strip()
-    if len(stripped) <= 30 and stripped == stripped.upper() and re.search(r"[A-Z]", stripped):
+    # Strip trailing punctuation and retry — catches "About the Author." / "The End!"
+    stripped_punct = re.sub(r"[.!?,;:]+$", "", base).strip()
+    if stripped_punct in _BAD_TITLES:
+        return True
+    # Strip ALL non-alpha chars and retry — catches "— About the Author —"
+    alpha_only = re.sub(r"[^\w\s]", "", base).strip()
+    if alpha_only in _BAD_TITLES:
         return True
     return False
 
@@ -295,11 +300,11 @@ def parse_epub(epub_path: Path, book_out_dir: Path) -> dict:
     # Deduplicate by file path (same file may appear at multiple TOC levels)
     seen_files: set[str] = set()
     toc_entries: list[tuple[str, str]] = []
-    for href, title in toc_raw:
+    for href, toc_ttl in toc_raw:   # NOTE: must NOT use "title" — it shadows the book title
         key = Path(href).name  # normalise to basename for dedup
         if key not in seen_files:
             seen_files.add(key)
-            toc_entries.append((href, title))
+            toc_entries.append((href, toc_ttl))
 
     # ── Chapters ──────────────────────────────────────────────────────────────
     chapters: list[dict] = []
@@ -470,7 +475,7 @@ _T["base.html"] = r"""<!DOCTYPE html>
       <a href="/admin/" class="icon-btn admin-link" title="Readr Admin" aria-label="Admin">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </a>
-      <button id="theme-btn" class="icon-btn" title="Đổi giao diện" aria-label="Toggle theme">
+      <button id="theme-btn" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">
         <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
@@ -480,7 +485,7 @@ _T["base.html"] = r"""<!DOCTYPE html>
   <main>{% block content %}{% endblock %}</main>
 
   <footer class="site-footer">
-    <p>© <em>{{ site_name }}</em></p>
+    <p><em>{{ site_name }}</em></p>
   </footer>
 
   <script src="{{ base_url }}/assets/app.js"></script>
@@ -491,12 +496,12 @@ _T["base.html"] = r"""<!DOCTYPE html>
 
 _T["index.html"] = r"""{% extends "base.html" %}
 {% block title %}{{ site_name }}{% endblock %}
-{% block description %}Thư viện — {{ books|length }} cuốn truyện{% endblock %}
+{% block description %}{{ books|length }} books in your library{% endblock %}
 {% block content %}
 <div class="page-home">
   <div class="hero">
-    <h1 class="hero-title">Thư viện</h1>
-    <p class="hero-sub">{{ books|length }} tác phẩm trong thư viện</p>
+    <h1 class="hero-title">{{ site_name }}</h1>
+    <p class="hero-sub">{{ books|length }} book{{ "s" if books|length != 1 else "" }} in your library</p>
   </div>
   <div class="book-grid wrap">
     {% for b in books %}
@@ -512,7 +517,7 @@ _T["index.html"] = r"""{% extends "base.html" %}
       <div class="card-body">
         <h2 class="card-title">{{ b.title }}</h2>
         <p class="card-author">{{ b.author }}</p>
-        <span class="card-badge">{{ b.chapter_count }} chương</span>
+        <span class="card-badge">{{ b.chapter_count }} ch.</span>
       </div>
     </a>
     {% endfor %}
@@ -535,21 +540,21 @@ _T["book.html"] = r"""{% extends "base.html" %}
       {% endif %}
     </div>
     <div class="info-col">
-      <p class="eyebrow">Tác phẩm</p>
+      <p class="eyebrow">Book</p>
       <h1 class="book-title">{{ book.title }}</h1>
       <p class="book-author">{{ book.author }}</p>
       {% if book.description %}
       <p class="book-desc">{{ book.description[:320] }}{% if book.description|length > 320 %}…{% endif %}</p>
       {% endif %}
       <div class="book-cta">
-        <a href="{{ chapters[0].slug }}.html" class="btn-read">Đọc ngay →</a>
-        <span class="ch-count">{{ book.chapter_count }} chương</span>
+        <a href="{{ chapters[0].slug }}.html" class="btn-read">Start Reading →</a>
+        <span class="ch-count">{{ book.chapter_count }} chapters</span>
       </div>
     </div>
   </div>
 
   <section class="toc-section wrap">
-    <h2 class="toc-head">Mục lục</h2>
+    <h2 class="toc-head">Table of Contents</h2>
     <ol class="toc-list">
       {% for ch in chapters %}
       <li>
@@ -577,14 +582,14 @@ _T["chapter.html"] = r"""{% extends "base.html" %}
     <div class="reader-subnav-in wrap">
       <a href="index.html" class="back-link">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-        Mục lục
+        Contents
       </a>
       <span class="rdr-book-name">{{ book.title }}</span>
       <div style="display:flex;gap:.2rem;flex-shrink:0">
-        <button class="icon-btn" id="btn-toc-top" title="Danh sách chương">
+        <button class="icon-btn" id="btn-toc-top" title="Chapters">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
         </button>
-        <button class="icon-btn" id="btn-sp-top" title="Cài đặt đọc" style="font-size:.8rem;font-weight:600">Aa</button>
+        <button class="icon-btn" id="btn-sp-top" title="Reading settings" style="font-size:.8rem;font-weight:600">Aa</button>
       </div>
     </div>
   </div>
@@ -599,18 +604,18 @@ _T["chapter.html"] = r"""{% extends "base.html" %}
   </article>
 
   <!-- Inline bottom nav -->
-  <nav class="ch-nav wrap" aria-label="Điều hướng chương">
+  <nav class="ch-nav wrap" aria-label="Chapter navigation">
     <div class="ch-nav-grid">
       {% if prev_chapter %}
       <a href="{{ prev_chapter.slug }}.html" class="nav-btn nav-prev">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-        <span><small>Chương trước</small><strong>{{ prev_chapter.title }}</strong></span>
+        <span><small>Previous</small><strong>{{ prev_chapter.title }}</strong></span>
       </a>
       {% else %}<div></div>{% endif %}
-      <a href="index.html" class="nav-toc" title="Mục lục">☰</a>
+      <a href="index.html" class="nav-toc" title="Contents"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></a>
       {% if next_chapter %}
       <a href="{{ next_chapter.slug }}.html" class="nav-btn nav-next">
-        <span><small>Chương tiếp</small><strong>{{ next_chapter.title }}</strong></span>
+        <span><small>Next</small><strong>{{ next_chapter.title }}</strong></span>
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
       {% else %}<div></div>{% endif %}
@@ -623,33 +628,33 @@ _T["chapter.html"] = r"""{% extends "base.html" %}
   {% if prev_chapter %}
   <a href="{{ prev_chapter.slug }}.html" class="fbar-btn" id="float-prev" title="{{ prev_chapter.title }}">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-    <span>Trước</span>
+    <span>Prev</span>
   </a>
   {% else %}
   <span class="fbar-btn fbar-disabled">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-    <span>Trước</span>
+    <span>Prev</span>
   </span>
   {% endif %}
   <div class="fbar-sep"></div>
-  <button class="fbar-btn" id="btn-toc-bar" title="Danh sách chương">
+  <button class="fbar-btn" id="btn-toc-bar" title="Chapters">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-    <span>Mục lục</span>
+    <span>Chapters</span>
   </button>
-  <button class="fbar-btn" id="btn-sp-bar" style="font-size:.85rem;font-weight:700;letter-spacing:-.02em" title="Cài đặt đọc">
+  <button class="fbar-btn" id="btn-sp-bar" style="font-size:.85rem;font-weight:700;letter-spacing:-.02em" title="Settings">
     Aa
-    <span>Cài đặt</span>
+    <span>Settings</span>
   </button>
   <div class="fbar-sep"></div>
   {% if next_chapter %}
   <a href="{{ next_chapter.slug }}.html" class="fbar-btn" id="float-next" title="{{ next_chapter.title }}">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-    <span>Tiếp</span>
+    <span>Next</span>
   </a>
   {% else %}
   <span class="fbar-btn fbar-disabled">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-    <span>Tiếp</span>
+    <span>Next</span>
   </span>
   {% endif %}
 </div>
@@ -658,14 +663,14 @@ _T["chapter.html"] = r"""{% extends "base.html" %}
 <div class="sp-panel" id="sp-panel">
   <div class="sp-handle"></div>
   <div class="sp-head">
-    <span class="sp-head-title">Cài đặt đọc</span>
+    <span class="sp-head-title">Reading Settings</span>
     <button class="sp-close" id="btn-sp-close">
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
   <div class="sp-body">
     <div class="sp-group">
-      <div class="sp-label">Cỡ chữ</div>
+      <div class="sp-label">Font Size</div>
       <div class="sp-row sp-fs-row">
         <button class="sp-ctrl" id="sp-fs-dec">A−</button>
         <span class="sp-fs-disp"><span id="sp-fs-val">18</span>px</span>
@@ -673,34 +678,34 @@ _T["chapter.html"] = r"""{% extends "base.html" %}
       </div>
     </div>
     <div class="sp-group">
-      <div class="sp-label">Font chữ</div>
+      <div class="sp-label">Typeface</div>
       <div class="sp-row">
         <button class="sp-opt" data-pref="font" data-val="serif" style="font-family:'Crimson Pro',Georgia,serif;font-size:1rem">Serif</button>
-        <button class="sp-opt" data-pref="font" data-val="sans"  style="font-family:system-ui,sans-serif">Sans-serif</button>
+        <button class="sp-opt" data-pref="font" data-val="sans"  style="font-family:system-ui,sans-serif">Sans</button>
       </div>
     </div>
     <div class="sp-group">
-      <div class="sp-label">Giãn dòng</div>
+      <div class="sp-label">Line Height</div>
       <div class="sp-row">
-        <button class="sp-opt" data-pref="lh" data-val="1.6">Chật</button>
-        <button class="sp-opt" data-pref="lh" data-val="1.9">Vừa</button>
-        <button class="sp-opt" data-pref="lh" data-val="2.3">Rộng</button>
+        <button class="sp-opt" data-pref="lh" data-val="1.6">Tight</button>
+        <button class="sp-opt" data-pref="lh" data-val="1.9">Normal</button>
+        <button class="sp-opt" data-pref="lh" data-val="2.3">Relaxed</button>
       </div>
     </div>
     <div class="sp-group">
-      <div class="sp-label">Độ rộng trang</div>
+      <div class="sp-label">Column Width</div>
       <div class="sp-row">
-        <button class="sp-opt" data-pref="width" data-val="52ch">Hẹp</button>
-        <button class="sp-opt" data-pref="width" data-val="68ch">Vừa</button>
-        <button class="sp-opt" data-pref="width" data-val="90ch">Rộng</button>
+        <button class="sp-opt" data-pref="width" data-val="52ch">Narrow</button>
+        <button class="sp-opt" data-pref="width" data-val="68ch">Medium</button>
+        <button class="sp-opt" data-pref="width" data-val="90ch">Wide</button>
       </div>
     </div>
     <div class="sp-group">
-      <div class="sp-label">Màu nền</div>
+      <div class="sp-label">Background</div>
       <div class="sp-row">
-        <button class="sp-bg" data-bg="light">☀ Trắng</button>
-        <button class="sp-bg" data-bg="sepia">📜 Vàng</button>
-        <button class="sp-bg" data-bg="dark" >🌙 Tối</button>
+        <button class="sp-bg" data-bg="light"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> Light</button>
+        <button class="sp-bg" data-bg="sepia"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Warm</button>
+        <button class="sp-bg" data-bg="dark"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg> Dark</button>
       </div>
     </div>
   </div>
@@ -711,7 +716,7 @@ _T["chapter.html"] = r"""{% extends "base.html" %}
   <div class="td-head">
     <div>
       <div class="td-book-title">{{ book.title }}</div>
-      <div class="td-ch-count">{{ book.chapter_count }} chương · đang đọc #{{ chapter.number }}</div>
+      <div class="td-ch-count">{{ book.chapter_count }} chapters · reading #{{ chapter.number }}</div>
     </div>
     <button class="td-close" id="btn-td-close">
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
