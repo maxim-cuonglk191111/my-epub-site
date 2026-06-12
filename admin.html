@@ -214,16 +214,16 @@ nav{flex:1;padding:.2rem .5rem}
 <!-- Setup screen -->
 <div id="setup-screen" class="screen">
   <div class="screen-card">
-    <div class="screen-logo">⚙️</div>
-    <h1>Chào mừng đến Readr</h1>
-    <p>Kết nối với Cloudflare Worker để bắt đầu quản lý thư viện.</p>
+    <div class="screen-logo"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+    <h1>Welcome to Readr</h1>
+    <p>Connect to your Cloudflare Worker to start managing your library.</p>
     <form id="form-setup">
       <label>Worker URL</label>
       <input id="s-worker" type="url" placeholder="https://readr-api.workers.dev" required>
-      <label>Mật khẩu Admin</label>
-      <input id="s-secret" type="password" placeholder="Admin secret" required>
-      <div id="setup-err" class="form-err">Không kết nối được — kiểm tra lại URL và secret.</div>
-      <button type="submit" id="setup-btn" class="btn btn-primary btn-full">Lưu & Kiểm tra kết nối</button>
+      <label>Password Admin</label>
+      <input id="s-secret" type="password" placeholder="Admin password" required>
+      <div id="setup-err" class="form-err">Connection failed — check URL and secret.</div>
+      <button type="submit" id="setup-btn" class="btn btn-primary btn-full">Save &amp; Test Connection</button>
     </form>
   </div>
 </div>
@@ -231,14 +231,14 @@ nav{flex:1;padding:.2rem .5rem}
 <!-- Login screen -->
 <div id="login-screen" class="screen hidden">
   <div class="screen-card">
-    <div class="screen-logo">🔐</div>
+    <div class="screen-logo"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div>
     <h1>Readr Admin</h1>
-    <p>Nhập mật khẩu để vào bảng điều khiển.</p>
+    <p>Enter your password to access the dashboard.</p>
     <form id="form-login">
-      <label>Mật khẩu</label>
+      <label>Password</label>
       <input id="l-pwd" type="password" placeholder="Admin password" required autofocus>
-      <div id="login-err" class="form-err">Mật khẩu không đúng.</div>
-      <button type="submit" class="btn btn-primary btn-full">Đăng nhập</button>
+      <div id="login-err" class="form-err">Incorrect password.</div>
+      <button type="submit" class="btn btn-primary btn-full">Sign In</button>
     </form>
   </div>
 </div>
@@ -250,35 +250,35 @@ nav{flex:1;padding:.2rem .5rem}
       <span class="sb-logo-icon">✦</span>
       <span class="sb-logo-text">Readr</span>
       <span class="sb-badge">BETA</span>
-      <button id="admin-theme-btn" class="icon-btn" style="margin-left:auto;flex-shrink:0" title="Đổi giao diện">
+      <button id="admin-theme-btn" class="icon-btn" style="margin-left:auto;flex-shrink:0" title="Toggle theme">
         <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
     </div>
     <nav>
-      <div class="sb-section">Nội dung</div>
+      <div class="sb-section">Content</div>
       <button class="sb-item active" data-tab="library">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        <span>Thư viện</span>
+        <span>Library</span>
       </button>
       <button class="sb-item" data-tab="upload">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <span>Tải lên EPUB</span>
+        <span>Add Books</span>
       </button>
-      <div class="sb-section">Hệ thống</div>
+      <div class="sb-section">System</div>
       <button class="sb-item" data-tab="deploys">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        <span>Triển khai</span>
+        <span>Deploys</span>
       </button>
       <button class="sb-item" data-tab="settings">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        <span>Cài đặt</span>
+        <span>Settings</span>
       </button>
     </nav>
     <div class="sb-footer">
       <a href="../" target="_blank" class="sb-ext-link">
         <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        <span>Xem trang web</span>
+        <span>View site</span>
       </a>
     </div>
   </aside>
@@ -288,26 +288,26 @@ nav{flex:1;padding:.2rem .5rem}
     <!-- ── Library ── -->
     <div id="panel-library" class="panel active">
       <div class="panel-hd">
-        <h1>Kho sách</h1>
-        <p>Sách đã upload và trạng thái build trên Readr</p>
+        <h1>Library</h1>
+        <p>Books uploaded to GitHub and their build status on Readr</p>
       </div>
       <div class="stats-row" id="lib-stats"></div>
 
       <!-- Live books (built by CF Pages) -->
-      <div class="section-label">📗 Đã build &amp; live trên site</div>
+      <div class="section-label"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Published &amp; Live</div>
       <div id="lib-live"></div>
 
       <!-- EPUBs in GitHub repo (uploaded, may not be built yet) -->
-      <div class="section-label" style="margin-top:1.75rem">📂 EPUB trong GitHub repo</div>
+      <div class="section-label" style="margin-top:1.75rem"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> In GitHub repo</div>
       <p style="font-size:.78rem;color:var(--tx3);margin-bottom:.75rem">
-        Các file đã được push lên GitHub. Sẽ xuất hiện trong mục "Đã build" sau khi CF Pages hoàn thành rebuild (~2-3 phút).
+        Files committed to GitHub. Appear in "Published &amp; Live" after the next CF Pages build (~2–3 min).
       </p>
       <div id="lib-repo"></div>
 
       <div style="margin-top:1.25rem;display:flex;gap:.5rem">
         <button class="btn btn-ghost btn-sm" id="btn-lib-refresh">
           <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.5 15a9 9 0 1 1-2.2-9.1L23 10"/></svg>
-          Làm mới
+          Refresh
         </button>
         <span id="lib-refresh-time" style="font-size:.75rem;color:var(--tx3);line-height:2"></span>
       </div>
@@ -316,15 +316,15 @@ nav{flex:1;padding:.2rem .5rem}
     <!-- ── Upload ── -->
     <div id="panel-upload" class="panel">
       <div class="panel-hd">
-        <h1>Thêm sách mới</h1>
-        <p>File sẽ được push lên GitHub → CF Pages tự động rebuild (~2-3 phút)</p>
+        <h1>Add Books</h1>
+        <p>Files are pushed to GitHub — CF Pages auto-rebuilds in ~2–3 minutes.</p>
       </div>
       <div class="upload-wrap">
         <div class="drop-zone" id="drop-zone">
           <input type="file" id="file-input" accept=".epub" multiple>
-          <div class="drop-icon">📂</div>
-          <div class="drop-text">Kéo thả file <strong>.epub</strong> vào đây</div>
-          <div class="drop-hint">hoặc click để chọn · có thể chọn nhiều file</div>
+          <div class="drop-icon"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="drop-text">Drop <strong>.epub</strong> files here</div>
+          <div class="drop-hint">or click to browse · multiple files supported</div>
         </div>
 
         <div class="queue" id="queue"></div>
@@ -332,17 +332,17 @@ nav{flex:1;padding:.2rem .5rem}
         <div id="upload-actions" class="upload-actions hidden">
           <button class="btn btn-primary" id="btn-upload">
             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Tải lên tất cả
+            Upload all
           </button>
-          <button class="btn btn-ghost" id="btn-clear">Xóa hàng chờ</button>
+          <button class="btn btn-ghost" id="btn-clear">Clear queue</button>
         </div>
 
         <!-- Pipeline notice — shown after successful upload -->
         <div id="pipeline-notice" class="pipeline-notice hidden">
-          <h3>⏳ Pipeline đang chạy</h3>
+          <h3>Pipeline running</h3>
           <div id="pipeline-steps"></div>
           <p style="font-size:.75rem;color:var(--tx3);margin-top:.75rem">
-            Sau khi hoàn tất, vào tab <strong>Thư viện</strong> và nhấn <strong>Làm mới</strong> để thấy sách mới.
+            After the build, go to <strong>Library</strong> and click <strong>Refresh</strong> to see new books.
           </p>
         </div>
       </div>
@@ -351,13 +351,13 @@ nav{flex:1;padding:.2rem .5rem}
     <!-- ── Deploys ── -->
     <div id="panel-deploys" class="panel">
       <div class="panel-hd">
-        <h1>Lịch sử triển khai</h1>
-        <p>Lịch sử push GitHub và trạng thái CF Pages build</p>
+        <h1>Deployments</h1>
+        <p>GitHub push history and CF Pages build status</p>
       </div>
       <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:1.25rem">
         <button class="btn btn-ghost btn-sm" id="btn-refresh-deploys">
           <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.5 15a9 9 0 1 1-2.2-9.1L23 10"/></svg>
-          Làm mới
+          Refresh
         </button>
         <span id="deploy-refresh-time" style="font-size:.75rem;color:var(--tx3)"></span>
       </div>
@@ -366,48 +366,48 @@ nav{flex:1;padding:.2rem .5rem}
 
     <!-- ── Settings ── -->
     <div id="panel-settings" class="panel">
-      <div class="panel-hd"><h1>Cấu hình</h1></div>
+      <div class="panel-hd"><h1>Settings</h1></div>
       <div class="settings-wrap">
 
         <div class="settings-card">
-          <h3>🔌 Kết nối Worker</h3>
+          <h3><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6h0M6 6h0"/><rect x="2" y="2" width="20" height="8" rx="2"/><path d="M2 10h20v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4z"/><line x1="12" y1="16" x2="12" y2="22"/></svg> Worker Connection</h3>
           <label>Worker URL</label>
           <input id="cfg-worker" type="url" placeholder="https://epub-to-web-api.workers.dev">
           <label>Admin Secret</label>
           <input id="cfg-secret" type="password" placeholder="••••••••">
           <div class="settings-row">
-            <button class="btn btn-primary btn-sm" id="btn-save-conn">Lưu &amp; Kiểm tra</button>
-            <span id="conn-ok" style="font-size:.78rem;color:var(--grn);display:none">✓ Kết nối OK</span>
+            <button class="btn btn-primary btn-sm" id="btn-save-conn">Save &amp; Test</button>
+            <span id="conn-ok" style="font-size:.78rem;color:var(--grn);display:none">Connected ✓</span>
           </div>
         </div>
 
         <div class="settings-card">
-          <h3>🌐 CF Pages Deployment Status (tuỳ chọn)</h3>
+          <h3><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> CF Pages Deployment Status <span style="font-weight:400;color:var(--tx3);font-size:.75rem">(optional)</span></h3>
           <p style="font-size:.8rem;color:var(--tx2);margin-bottom:.5rem">
-            Thêm các secrets sau vào Worker để thấy trạng thái deploy thực tế trong tab Triển khai:
+            Add these secrets to your Worker to show real deployment status:
           </p>
           <p style="font-size:.78rem;color:var(--tx3);line-height:1.8">
-            <code>CF_API_TOKEN</code> — CF API token (scope: Pages:Read)<br>
-            <code>CF_ACCOUNT_ID</code> — Account ID từ CF Dashboard<br>
-            <code>CF_PAGES_PROJECT</code> — Tên CF Pages project
+            <code>CF_API_TOKEN</code> — CF API token with Pages:Read scope<br>
+            <code>CF_ACCOUNT_ID</code> — Your Cloudflare account ID<br>
+            <code>CF_PAGES_PROJECT</code> — CF Pages project name
           </p>
         </div>
 
         <div class="settings-card">
-          <h3>💡 Giải thích về output</h3>
+          <h3><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> How It Works</h3>
           <p style="font-size:.8rem;color:var(--tx2);line-height:1.8">
-            Thư mục <code>output/</code> <strong>không</strong> được commit vào GitHub — nó được tạo ra bởi CF Pages trong quá trình build và serve trực tiếp. Bạn sẽ không thấy nó trong repo.<br><br>
-            EPUB files lưu tại: <code>books/*.epub</code> trong GitHub repo<br>
-            Sách đã build xem tại: <code>yoursite.pages.dev/slug/</code><br>
+            The <code>output/</code> folder is <strong>not</strong> committed to GitHub — CF Pages generates and serves it directly.<br><br>
+            EPUB files stored at: <code>books/*.epub</code> trong GitHub repo<br>
+            Published books at: <code>yoursite.pages.dev/slug/</code><br>
             Manifest: <code>yoursite.pages.dev/books.json</code>
           </p>
         </div>
 
         <div class="settings-card">
-          <h3>🚪 Phiên đăng nhập</h3>
+          <h3><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Session</h3>
           <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-            <button class="btn btn-ghost btn-sm" id="btn-logout">Đăng xuất</button>
-            <button class="btn btn-danger btn-sm" id="btn-reset">Xóa tất cả cài đặt</button>
+            <button class="btn btn-ghost btn-sm" id="btn-logout">Sign out</button>
+            <button class="btn btn-danger btn-sm" id="btn-reset">Reset settings</button>
           </div>
         </div>
       </div>
@@ -460,7 +460,7 @@ document.getElementById('form-setup').addEventListener('submit', async e => {
   const workerUrl = document.getElementById('s-worker').value.trim().replace(/\/$/,'');
   const secret    = document.getElementById('s-secret').value.trim();
   const btn       = document.getElementById('setup-btn');
-  btn.disabled = true; btn.textContent = 'Đang kiểm tra…';
+  btn.disabled = true; btn.textContent = 'Testing…';
   try {
     const r = await fetch(`${workerUrl}/books`, { headers: { Authorization: `Bearer ${secret}` } });
     if (!r.ok) throw new Error();
@@ -471,7 +471,7 @@ document.getElementById('form-setup').addEventListener('submit', async e => {
   } catch {
     document.getElementById('setup-err').style.display = 'block';
   } finally {
-    btn.disabled = false; btn.textContent = 'Lưu & Kiểm tra kết nối';
+    btn.disabled = false; btn.textContent = 'Save & Test Connection';
   }
 });
 
@@ -532,22 +532,22 @@ async function loadLibrary() {
   renderRepoFiles(repoFiles, siteBooks);
 
   document.getElementById('lib-refresh-time').textContent =
-    'Làm mới: ' + new Date().toLocaleTimeString('vi-VN');
+    'Refreshed: ' + new Date().toLocaleTimeString();
 }
 
 function renderStats(books, files) {
   const chCount = books.reduce((s, b) => s + (b.chapter_count || 0), 0);
   document.getElementById('lib-stats').innerHTML = `
-    <div class="stat"><div class="stat-val">${books.length}</div><div class="stat-label">Đã xuất bản</div></div>
-    <div class="stat"><div class="stat-val">${chCount}</div><div class="stat-label">Tổng chương</div></div>
-    <div class="stat"><div class="stat-val">${files.length}</div><div class="stat-label">EPUB trong repo</div></div>
+    <div class="stat"><div class="stat-val">${books.length}</div><div class="stat-label">Published</div></div>
+    <div class="stat"><div class="stat-val">${chCount}</div><div class="stat-label">Total chapters</div></div>
+    <div class="stat"><div class="stat-val">${files.length}</div><div class="stat-label">EPUBs in repo</div></div>
   `;
 }
 
 function renderLiveBooks(books) {
   const el = document.getElementById('lib-live');
   if (!books.length) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Chưa có sách nào được build.<br>Tải lên EPUB và chờ CF Pages rebuild.</div></div>';
+    el.innerHTML = '<div class="empty"><div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></div><div class="empty-text">No books published yet.<br>Add an EPUB and wait for CF Pages to rebuild.</div></div>';
     return;
   }
   el.innerHTML = `<div class="book-grid">${books.map(b => `
@@ -563,7 +563,7 @@ function renderLiveBooks(books) {
         <div class="tile-author">${esc(b.author||'')}</div>
         <div class="tile-meta">${b.chapter_count||0} chương · <code>${b.slug}</code></div>
         <div class="tile-actions">
-          <a href="../${b.slug}/" target="_blank" class="btn btn-ghost btn-sm">Đọc</a>
+          <a href="../${b.slug}/" target="_blank" class="btn btn-ghost btn-sm">Read</a>
           <button class="btn btn-danger btn-sm" onclick="deleteBook('${esc(b.slug)}','${esc(b.title)}')">Xóa</button>
         </div>
       </div>
@@ -576,7 +576,7 @@ function renderRepoFiles(files, siteBooks) {
   const liveSlugs = new Set(siteBooks.map(b => b.slug));
 
   if (!files.length) {
-    el.innerHTML = '<p style="font-size:.82rem;color:var(--tx3)">Chưa có file EPUB nào trong repo.</p>';
+    el.innerHTML = '<p style="font-size:.82rem;color:var(--tx3)">No EPUB files in repo yet.</p>';
     return;
   }
 
@@ -586,7 +586,7 @@ function renderRepoFiles(files, siteBooks) {
     const isBuilt = liveSlugs.has(guessSlug) || [...liveSlugs].some(s => guessSlug.includes(s) || s.includes(guessSlug.slice(0,12)));
     return `
     <div class="epub-row">
-      <span class="epub-icon">📄</span>
+      <span class="epub-icon"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
       <span class="epub-name" title="${esc(f.name)}">${esc(f.name)}</span>
       <span class="epub-size">${fmtSize(f.size)}</span>
       <span class="epub-status">
@@ -599,13 +599,13 @@ function renderRepoFiles(files, siteBooks) {
 document.getElementById('btn-lib-refresh').addEventListener('click', loadLibrary);
 
 async function deleteBook(slug, title) {
-  if (!confirm(`Xóa "${title}" khỏi GitHub và rebuild site?`)) return;
+  if (!confirm(`Delete "${title}" from GitHub and rebuild site?\n\nThis cannot be undone.`)) return;
   try {
     await api(`/book/${encodeURIComponent(slug)}`, { method: 'DELETE' });
-    toast(`✓ Đã xóa "${title}". Site đang rebuild…`, 'ok');
+    toast(`Deleted "${title}". Site rebuilding…`, 'ok');
     setTimeout(loadLibrary, 3000);
   } catch (err) {
-    toast(`Lỗi xóa: ${err.message}`, 'err');
+    toast(`Delete error: ${err.message}`, 'err');
   }
 }
 
@@ -622,7 +622,7 @@ dropZone.addEventListener('dragleave', ()  => dropZone.classList.remove('over'))
 dropZone.addEventListener('drop', e => {
   e.preventDefault(); dropZone.classList.remove('over');
   const files = [...e.dataTransfer.files].filter(f => f.name.toLowerCase().endsWith('.epub'));
-  if (!files.length) { toast('Chỉ nhận file .epub', 'err'); return; }
+  if (!files.length) { toast('Only .epub files accepted', 'err'); return; }
   addFiles(files);
 });
 
@@ -630,7 +630,7 @@ function addFiles(files) {
   files.forEach(f => {
     if (!f.name.toLowerCase().endsWith('.epub')) return;
     if (queue.find(q => q.file.name === f.name && q.status !== 'err')) return;
-    queue.push({ file: f, status: 'pending', progress: 0, msg: 'Chờ tải lên' });
+    queue.push({ file: f, status: 'pending', progress: 0, msg: 'Pending' });
   });
   renderQueue();
 }
@@ -670,7 +670,7 @@ async function uploadOne(i) {
   const q = queue[i];
   if (!q || q.status === 'uploading' || q.status === 'ok' || q.status === 'skip') return;
 
-  q.status = 'uploading'; q.progress = 15; q.msg = 'Đang đọc file…';
+  q.status = 'uploading'; q.progress = 15; q.msg = 'Reading file…';
   renderQueue();
 
   try {
@@ -682,7 +682,7 @@ async function uploadOne(i) {
       r.readAsDataURL(q.file);
     });
 
-    q.progress = 50; q.msg = 'Đang push lên GitHub…';
+    q.progress = 50; q.msg = 'Pushing to GitHub…';
     renderQueue();
 
     const data = await api('/upload', {
@@ -694,19 +694,19 @@ async function uploadOne(i) {
     if (data.note) {
       // File unchanged — not an error
       q.status = 'skip'; q.progress = 100;
-      q.msg = `✓ File không đổi — không cần rebuild (${data.note})`;
+      q.msg = `File unchanged — no rebuild needed (${data.note})`;
     } else {
       q.status = 'ok'; q.progress = 100;
-      q.msg = `✓ Đã push lên GitHub (commit ${data.commit || '—'})`;
+      q.msg = `Pushed to GitHub (commit ${data.commit || '—'})`;
       showPipeline();
     }
     renderQueue();
-    toast(`✓ ${q.file.name}`, 'ok');
+    toast(`Uploaded: ${q.file.name}`, 'ok');
   } catch (err) {
     q.status = 'err'; q.progress = 0;
-    q.msg = `✗ ${err.message}`;
+    q.msg = `Failed: ${err.message}`;
     renderQueue();
-    toast(`Lỗi: ${err.message}`, 'err');
+    toast(`Upload error: ${err.message}`, 'err');
   }
 }
 
@@ -716,10 +716,10 @@ function showPipeline() {
   notice.classList.remove('hidden');
 
   const steps = [
-    { label: 'File được push lên GitHub repo', done: true,  ms: 0 },
-    { label: 'CF Pages phát hiện commit và bắt đầu build', done: false, ms: 15000 },
-    { label: 'pip install + python epub_to_web.py đang chạy', done: false, ms: 45000 },
-    { label: 'Deploy hoàn tất — nhấn "Làm mới" ở Thư viện', done: false, ms: 150000 },
+    { label: 'File pushed to GitHub repo', done: true,  ms: 0 },
+    { label: 'CF Pages detected commit, build starting', done: false, ms: 15000 },
+    { label: 'Running pip install + epub_to_web.py', done: false, ms: 45000 },
+    { label: 'Deploy complete — click Refresh in Library', done: false, ms: 150000 },
   ];
 
   const el = document.getElementById('pipeline-steps');
@@ -755,15 +755,15 @@ function showPipeline() {
 // ══════════════════════════════════════════════════════
 async function loadDeploys() {
   document.getElementById('deploys-content').innerHTML =
-    '<p style="color:var(--tx3);font-size:.83rem">Đang tải…</p>';
+    '<p style="color:var(--tx3);font-size:.83rem">Loading…</p>';
   try {
     const { commits, deploys } = await api('/status');
     renderDeploys(commits, deploys);
     document.getElementById('deploy-refresh-time').textContent =
-      'Cập nhật: ' + new Date().toLocaleTimeString('vi-VN');
+      'Updated: ' + new Date().toLocaleTimeString();
   } catch (err) {
     document.getElementById('deploys-content').innerHTML =
-      `<p style="color:var(--red);font-size:.83rem">Lỗi: ${esc(err.message)}</p>`;
+      `<p style="color:var(--red);font-size:.83rem">Error: ${esc(err.message)}</p>`;
   }
 }
 
@@ -771,12 +771,12 @@ function renderDeploys(commits, deploys) {
   let html = '';
 
   if (deploys?.length) {
-    html += `<div class="section-label">🚀 CF Pages Deployments</div>`;
+    html += `<div class="section-label"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg> CF Pages Deployments</div>`;
     html += deploys.map(d => {
       const [dot,tag,lbl] = {
         success: ['dot-ok','tg','Thành công'],
         active:  ['dot-ok','tg','Live'],
-        failure: ['dot-fail','tr','Thất bại'],
+        failure: ['dot-fail','tr','Failed'],
         building:['dot-building','ty','Đang build'],
       }[d.status] || ['dot-idle','td', d.status || '?'];
       return `
@@ -791,14 +791,14 @@ function renderDeploys(commits, deploys) {
       </div>`;
     }).join('');
   } else if (deploys === null) {
-    html += `<div class="section-label">🚀 CF Pages Deployments</div>
+    html += `<div class="section-label">CF Pages Deployments</div>
     <p style="font-size:.8rem;color:var(--tx3);margin-bottom:1.25rem">
-      Chưa cấu hình. Thêm <code>CF_API_TOKEN</code>, <code>CF_ACCOUNT_ID</code>,
-      <code>CF_PAGES_PROJECT</code> vào Worker secrets để thấy trạng thái deploy thực tế.
+      Not configured. Add <code>CF_API_TOKEN</code>, <code>CF_ACCOUNT_ID</code>,
+      <code>CF_PAGES_PROJECT</code> to your Worker secrets to enable real deploy status.
     </p>`;
   }
 
-  html += `<div class="section-label" style="margin-top:${deploys?'1.5rem':'0'}">📝 GitHub Commits (books/)</div>`;
+  html += `<div class="section-label" style="margin-top:${deploys?'1.5rem':'0'}"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg> GitHub Commits</div>`;
   if (!commits.length) {
     html += '<p style="font-size:.82rem;color:var(--tx3)">Chưa có commit nào.</p>';
   } else {
@@ -831,16 +831,16 @@ document.getElementById('btn-save-conn').addEventListener('click', async () => {
     localStorage.setItem(LS, JSON.stringify(CFG));
     const ok = document.getElementById('conn-ok');
     ok.style.display = 'inline'; setTimeout(() => ok.style.display = 'none', 2500);
-    toast('✓ Cài đặt đã được lưu', 'ok');
+    toast('Settings saved', 'ok');
   } catch {
-    toast('Không kết nối được — kiểm tra lại URL và secret', 'err');
+    toast('Connection failed — check URL and secret', 'err');
   }
 });
 document.getElementById('btn-logout').addEventListener('click', () => {
   sessionStorage.removeItem(SS); location.reload();
 });
 document.getElementById('btn-reset').addEventListener('click', () => {
-  if (confirm('Xóa tất cả cài đặt đã lưu?')) {
+  if (confirm('Reset all settings?')) {
     localStorage.removeItem(LS); sessionStorage.removeItem(SS); location.reload();
   }
 });
